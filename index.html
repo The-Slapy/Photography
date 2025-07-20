@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gabriel Rmz Photography</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Configuración de Tailwind para soportar el modo oscuro basado en una clase
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        // Paleta de colores mejorada para modo oscuro
+                        dark: {
+                            background: '#0f172a', // slate-900
+                            surface: '#1e293b',    // slate-800
+                            text: {
+                                primary: '#e2e8f0',   // slate-200
+                                secondary: '#94a3b8' // slate-400
+                            },
+                            border: '#334155'      // slate-700
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Estilos base y transiciones */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Animación de galería más fluida */
+        .gallery-item {
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            position: relative; 
+            overflow: hidden;
+        }
+        .gallery-item.hidden {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        .filter-btn.active {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    
+    <!-- Script en el HEAD para evitar el parpadeo del tema (FOUC) -->
+    <script>
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+</head>
+<body class="bg-white text-gray-800 dark:bg-dark-background dark:text-dark-text-primary transition-colors duration-300 antialiased">
+
+    <!-- ====== Cabecera ====== -->
+    <header class="bg-white/80 dark:bg-dark-background/80 backdrop-blur-md shadow-sm dark:shadow-black/20 sticky top-0 z-50 transition-colors duration-300">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo del Fotógrafo -->
+                <div>
+                    <a href="#">
+                        <img id="logo-img" class="h-12 w-auto" src="" alt="Logo del Fotógrafo">
+                    </a>
+                </div>
+
+                <div class="flex items-center">
+                    <!-- Navegación Principal -->
+                    <nav id="main-nav" class="hidden md:flex items-center space-x-2 lg:space-x-4">
+                        <!-- Botones de categoría -->
+                    </nav>
+                    
+                    <!-- Interruptor de Modo Oscuro -->
+                    <button id="theme-toggle" type="button" class="ml-4 p-2 rounded-full text-gray-500 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-surface focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-dark-border" title="Cambiar tema">
+                        <svg id="theme-toggle-dark-icon" class="hidden h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                        <svg id="theme-toggle-light-icon" class="hidden h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                    </button>
+                    
+                    <!-- Botón de Menú Móvil -->
+                    <div class="md:hidden ml-2">
+                        <button id="mobile-menu-button" class="p-2 rounded-md text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-surface focus:outline-none" title="Abrir menú móvil">
+                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Menú desplegable para móvil -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white dark:bg-dark-surface shadow-lg">
+            <nav id="mobile-nav" class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <!-- Botones de categoría móvil -->
+            </nav>
+        </div>
+    </header>
+
+    <!-- ====== Contenido Principal ====== -->
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <div id="subcategory-filters" class="flex flex-wrap justify-center gap-2 mb-8 md:mb-12"></div>
+        <div id="gallery" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            <!-- Mensaje de carga -->
+            <p id="loading-message" class="col-span-full text-center text-gray-500 dark:text-dark-text-secondary">Cargando fotografías...</p>
+        </div>
+    </main>
+
+    <!-- ====== Lightbox ====== -->
+    <div id="lightbox" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden p-4">
+        <button id="close-lightbox" class="absolute top-4 right-4 text-white text-3xl">&times;</button>
+        <img id="lightbox-img" src="" alt="Vista ampliada" class="max-w-full max-h-full rounded-lg shadow-2xl">
+        <button id="prev-lightbox" class="absolute left-4 text-white text-4xl">&#8249;</button>
+        <button id="next-lightbox" class="absolute right-4 text-white text-4xl">&#8250;</button>
+    </div>
+
+    <!-- ====== Pie de Página ====== -->
+    <footer class="bg-gray-50 dark:bg-dark-background mt-12 border-t border-gray-200 dark:border-dark-border transition-colors duration-300">
+        <div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-gray-500 dark:text-dark-text-secondary">
+            <p>&copy; <span id="year"></span> Gabriel Rmz Photography. Todos los derechos reservados.</p>
+            <p class="text-sm mt-2">Sitio web diseñado con ♥</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            // --- CONFIGURACIÓN ---
+            const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbysUeDagoiRW0UiA6aXqSg6ikz-0jLBDSH-pnQla76nI7d25-Nr-OZQMc_vzKr-i1wS/exec';
+
+            const logoLightUrl = 'https://res.cloudinary.com/dzfelzmah/image/upload/v1752942649/GABRIEL-RAMIREZ-FIRMA-NEGRO-EXPANDIDO_euw3of.png';
+            const logoDarkUrl = 'https://res.cloudinary.com/dzfelzmah/image/upload/v1752944062/GABRIEL-RAMIREZ-FIRMA-BLANCO-EXPANDIDO_x8j5at.png';
+            
+            // --- ELEMENTOS DEL DOM ---
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+            const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+            const logoImg = document.getElementById('logo-img');
+            const mainNav = document.getElementById('main-nav');
+            const mobileNav = document.getElementById('mobile-nav');
+            const subcategoryFilters = document.getElementById('subcategory-filters');
+            const gallery = document.getElementById('gallery');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            const closeLightboxBtn = document.getElementById('close-lightbox');
+            const prevBtn = document.getElementById('prev-lightbox');
+            const nextBtn = document.getElementById('next-lightbox');
+            const loadingMessage = document.getElementById('loading-message');
+            
+            let currentImages = [];
+            let currentIndex = 0;
+            const transitionDuration = 400;
+
+            // --- LÓGICA DEL MODO OSCURO ---
+            const updateThemeAndLogo = () => {
+                const isDarkMode = document.documentElement.classList.contains('dark');
+                themeToggleDarkIcon.classList.toggle('hidden', isDarkMode);
+                themeToggleLightIcon.classList.toggle('hidden', !isDarkMode);
+                logoImg.src = isDarkMode ? logoDarkUrl : logoLightUrl;
+            };
+
+            themeToggleBtn.addEventListener('click', function() {
+                document.documentElement.classList.toggle('dark');
+                localStorage.setItem('color-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+                updateThemeAndLogo();
+            });
+            
+            updateThemeAndLogo();
+
+            // --- LÓGICA DE LA GALERÍA ---
+            let portfolioData = {};
+
+            async function loadPortfolioData() {
+                if (!GOOGLE_SHEET_URL || GOOGLE_SHEET_URL === 'PEGA_AQUÍ_LA_URL_DE_TU_WEB_APP_DE_GOOGLE_SHEETS') {
+                    loadingMessage.textContent = 'Error: La URL de Google Sheets no está configurada.';
+                    return null;
+                }
+                try {
+                    const response = await fetch(GOOGLE_SHEET_URL);
+                    if (!response.ok) {
+                        throw new Error(`Error de red: ${response.statusText}`);
+                    }
+                    const data = await response.json();
+                    if (data.error) {
+                        throw new Error(data.message);
+                    }
+                    return data;
+                } catch (error) {
+                    console.error('Error al cargar los datos del portafolio:', error);
+                    loadingMessage.textContent = `No se pudieron cargar las fotografías. (${error.message})`;
+                    return null;
+                }
+            }
+
+            function renderGallery() {
+                gallery.innerHTML = '';
+                const createImageItem = (img, category, subcategory, subSubCategoryName = '') => {
+                    const item = document.createElement('div');
+                    item.className = 'gallery-item hidden';
+                    item.style.display = 'none';
+                    item.dataset.category = category;
+                    item.dataset.subcategory = subcategory;
+                    item.dataset.subSubcategory = subSubCategoryName;
+                    item.dataset.isRepresentative = 'false';
+                    const content = `<div class="cursor-pointer group rounded-lg shadow-md dark:bg-dark-surface dark:shadow-black/20 overflow-hidden"><img src="${img.src}" alt="${img.alt}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/600x600/ccc/999?text=Error'"></div>`;
+                    item.innerHTML = content;
+                    gallery.appendChild(item);
+                };
+
+                for (const category in portfolioData) {
+                    for (const subcategory in portfolioData[category]) {
+                        const subcategoryContent = portfolioData[category][subcategory];
+                        if (Array.isArray(subcategoryContent)) {
+                            subcategoryContent.forEach(img => createImageItem(img, category, subcategory));
+                        } else {
+                            for (const subSubcategory in subcategoryContent) {
+                                const images = subcategoryContent[subSubcategory];
+                                if (Array.isArray(images)) {
+                                    images.forEach(img => createImageItem(img, category, subcategory, subSubcategory));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            function filterGallery(category, subcategory = 'All') {
+                const allItems = gallery.querySelectorAll('.gallery-item');
+                currentImages = [];
+                allItems.forEach(item => { if (!item.classList.contains('hidden')) { item.classList.add('hidden'); } });
+                setTimeout(() => {
+                    allItems.forEach(item => item.style.display = 'none');
+                    const itemsToShow = [];
+                    const subcategoriesShown = new Set();
+                    allItems.forEach(item => {
+                        let shouldBeVisible = false;
+                        if (item.dataset.category === category) {
+                            if (subcategory === 'All') {
+                                if (!subcategoriesShown.has(item.dataset.subcategory)) {
+                                    shouldBeVisible = true;
+                                    subcategoriesShown.add(item.dataset.subcategory);
+                                }
+                            } else {
+                                if (item.dataset.subcategory === subcategory) {
+                                    shouldBeVisible = true;
+                                }
+                            }
+                        }
+                        if (shouldBeVisible) { itemsToShow.push(item); }
+                    });
+                    itemsToShow.forEach((item, index) => {
+                        setTimeout(() => {
+                            item.style.display = 'block';
+                            void item.offsetWidth;
+                            item.classList.remove('hidden');
+                            item.dataset.isRepresentative = (subcategory === 'All');
+                            currentImages.push(item.querySelector('img').src);
+                        }, index * 50);
+                    });
+                }, transitionDuration);
+            }
+
+            function setButtonState(button, isActive) {
+                const activeClasses = ['active', 'bg-gray-800', 'text-white', 'dark:bg-gray-200', 'dark:text-gray-900', 'border-gray-800', 'dark:border-gray-200'];
+                const inactiveClasses = ['border-gray-300', 'dark:border-dark-border', 'text-gray-700', 'dark:text-dark-text-secondary', 'hover:bg-gray-100', 'dark:hover:bg-dark-surface'];
+                button.classList.remove(...(isActive ? inactiveClasses : activeClasses));
+                button.classList.add(...(isActive ? activeClasses : inactiveClasses));
+            }
+
+            function createSubcategoryButton(category, subcategory, isActive = false) {
+                const button = document.createElement('button');
+                button.textContent = subcategory;
+                button.className = 'filter-btn px-4 py-2 text-sm font-medium rounded-full transition-colors border';
+                setButtonState(button, isActive);
+                button.onclick = () => {
+                    document.querySelectorAll('#subcategory-filters .filter-btn').forEach(btn => setButtonState(btn, false));
+                    setButtonState(button, true);
+                    filterGallery(category, subcategory);
+                };
+                return button;
+            }
+            
+            function selectCategory(category) {
+                document.querySelectorAll('#main-nav .filter-btn, #mobile-nav .filter-btn').forEach(btn => {
+                    setButtonState(btn, btn.textContent === category);
+                });
+                updateSubcategoryFilters(category);
+            }
+
+            function updateSubcategoryFilters(category) {
+                subcategoryFilters.innerHTML = '';
+                const subcategories = Object.keys(portfolioData[category]);
+                const allBtn = createSubcategoryButton(category, 'All', true);
+                subcategoryFilters.appendChild(allBtn);
+                subcategories.forEach(sub => {
+                    const subBtn = createSubcategoryButton(category, sub, false);
+                    subcategoryFilters.appendChild(subBtn);
+                });
+                filterGallery(category, 'All');
+            }
+
+            function initializeUI() {
+                loadingMessage.style.display = 'none';
+                renderGallery();
+                const categories = Object.keys(portfolioData);
+                categories.forEach(category => {
+                    const btn = document.createElement('button');
+                    btn.textContent = category;
+                    btn.className = 'filter-btn px-4 py-2 text-sm font-medium rounded-full transition-colors border';
+                    setButtonState(btn, false);
+                    btn.onclick = () => selectCategory(category);
+                    mainNav.appendChild(btn);
+                    const mobileBtn = btn.cloneNode(true);
+                    mobileBtn.onclick = () => {
+                        selectCategory(category);
+                        mobileMenu.classList.add('hidden');
+                    };
+                    mobileNav.appendChild(mobileBtn);
+                });
+                if (categories.length > 0) {
+                    selectCategory(categories[0]);
+                }
+            }
+
+            // --- INICIALIZACIÓN ---
+            portfolioData = await loadPortfolioData();
+            if (portfolioData) {
+                initializeUI();
+            }
+            
+            // --- Eventos restantes ---
+            mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+            gallery.addEventListener('click', e => {
+                const item = e.target.closest('.gallery-item');
+                if (!item || item.classList.contains('hidden')) return;
+                if (item.dataset.isRepresentative === 'true') {
+                    const targetButton = Array.from(subcategoryFilters.children).find(btn => btn.textContent === item.dataset.subcategory);
+                    if (targetButton) targetButton.click();
+                } else {
+                    const imgSrc = item.querySelector('img').src;
+                    currentIndex = currentImages.indexOf(imgSrc);
+                    if (currentIndex > -1) {
+                        lightboxImg.src = imgSrc;
+                        lightbox.classList.remove('hidden');
+                    }
+                }
+            });
+            const closeLightbox = () => lightbox.classList.add('hidden');
+            closeLightboxBtn.addEventListener('click', closeLightbox);
+            lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+            prevBtn.addEventListener('click', () => { if (currentImages.length === 0) return; currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length; lightboxImg.src = currentImages[currentIndex]; });
+            nextBtn.addEventListener('click', () => { if (currentImages.length === 0) return; currentIndex = (currentIndex + 1) % currentImages.length; lightboxImg.src = currentImages[currentIndex]; });
+            document.addEventListener('keydown', e => { if (!lightbox.classList.contains('hidden')) { if (e.key === 'Escape') closeLightbox(); else if (e.key === 'ArrowLeft') prevBtn.click(); else if (e.key === 'ArrowRight') nextBtn.click(); } });
+            document.getElementById('year').textContent = new Date().getFullYear();
+        });
+    </script>
+</body>
+</html>
