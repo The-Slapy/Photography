@@ -127,12 +127,10 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', async function () {
-            // --- CONFIGURACIÓN ---
             const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbysUeDagoiRW0UiA6aXqSg6ikz-0jLBDSH-pnQla76nI7d25-Nr-OZQMc_vzKr-i1wS/exec';
             const logoLightUrl = 'Logo/Logo_negro.png';
             const logoDarkUrl = 'Logo/Logo_blanco.png';
             
-            // --- ELEMENTOS DEL DOM ---
             const themeToggleBtn = document.getElementById('theme-toggle');
             const logoImg = document.getElementById('logo-img');
             const mainNav = document.getElementById('main-nav');
@@ -320,21 +318,29 @@
                 loadingMessage.style.display = 'none';
                 renderGallery();
                 const categories = Object.keys(portfolioData);
+                
+                // CORRECCIÓN: Lógica para crear botones móviles
                 categories.forEach(category => {
+                    // Botón para escritorio
                     const btn = document.createElement('button');
                     btn.textContent = category;
                     btn.className = 'filter-btn px-4 py-2 text-sm font-medium rounded-full transition-colors border';
                     setButtonState(btn, false);
                     btn.onclick = () => selectCategory(category);
                     mainNav.appendChild(btn);
-                    const mobileBtn = btn.cloneNode();
+
+                    // Botón para móvil (creado por separado para evitar errores)
+                    const mobileBtn = document.createElement('button');
+                    mobileBtn.textContent = category;
                     mobileBtn.className = 'filter-btn block w-full text-left px-3 py-2 rounded-md text-base font-medium';
+                    setButtonState(mobileBtn, false); // Aplicar estado inicial
                     mobileBtn.onclick = () => {
                         selectCategory(category);
                         mobileMenu.classList.add('hidden');
                     };
                     mobileNav.appendChild(mobileBtn);
                 });
+
                 if (categories.length > 0) {
                     selectCategory(categories[0]);
                 }
