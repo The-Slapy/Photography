@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Código para Portafolio v2</title>
+    <link href="tailwind.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .category-block, .subcategory-block {
+            transition: all 0.3s ease;
+        }
+        #import-area, #output {
+            resize: vertical;
+        }
+        .status-message {
+            transition: opacity 0.3s ease;
+        }
+        .editable-title {
+            cursor: text;
+            position: relative;
+            padding-right: 20px;
+        }
+        .editable-title::after {
+            content: '✎';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            color: #9ca3af;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .editable-title:hover::after {
+            opacity: 1;
+        }
+        #image-preview-large {
+            display: none;
+            position: fixed;
+            width: 250px;
+            height: 250px;
+            object-fit: cover;
+            border: 4px solid white;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+            z-index: 50;
+            pointer-events: none;
+        }
+        .star-btn {
+            cursor: pointer;
+            font-size: 1.25rem;
+            line-height: 1;
+            transition: color 0.2s ease, transform 0.2s ease;
+            color: #d1d5db; /* Gris por defecto */
+        }
+        .star-btn:hover {
+            transform: scale(1.2);
+        }
+        .star-btn.selected {
+            color: #f59e0b; /* Amarillo/Dorado para la seleccionada */
+        }
+        .image-entry {
+            cursor: grab;
+        }
+        .image-entry.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+        .drag-over-gap {
+            height: 2px;
+            background-color: #3b82f6; /* Azul */
+            margin: 4px 0;
+        }
+        .drag-handle {
+            color: #9ca3af;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4 sm:p-6 md:p-8">
+
+    <img id="image-preview-large" src="" alt="Previsualización">
+
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-lg">
+        <div class="mb-6 border-b pb-4">
+            <h1 class="text-2xl font-bold text-gray-800">Generador de Código para Portafolio v2</h1>
+            <p class="text-gray-600 mt-1">Añade o importa tus galerías. Cada subcategoría tiene un límite de 8 fotos.</p>
+        </div>
+
+        <div class="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <h2 class="text-lg font-semibold text-blue-800 mb-2">Importar y Editar Estructura Existente</h2>
+            <p class="text-sm text-blue-700 mb-2">Pega aquí tu código `portfolioData` para editarlo.</p>
+            <textarea id="import-area" placeholder="Pega aquí tu código. Funciona con 'const portfolioData = { ... };' o solo con '{ ... }'." class="w-full h-32 p-2 font-mono text-sm bg-white rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+            <div id="status-message-container" class="mt-2 text-sm font-medium"></div>
+            <div class="flex gap-2 mt-2">
+                <button id="load-data-btn" class="bg-blue-500 text-white font-semibold px-4 py-2 rounded-md hover:bg-blue-600 transition-colors">Cargar Estructura</button>
+                <button id="clear-all-btn" class="bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-md hover:bg-gray-300 transition-colors">Limpiar Todo</button>
+            </div>
+        </div>
+
+        <div id="categories-container" class="space-y-4 mb-6"></div>
+
+        <div class="flex gap-2 mb-8">
+            <input type="text" id="new-category-name" placeholder="O crea una nueva categoría (ej. Retratos)" class="flex-grow p-2 border rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            <button id="add-category-btn" class="bg-indigo-500 text-white font-semibold px-4 py-2 rounded-md hover:bg-indigo-600 transition-colors">Añadir Categoría</button>
+        </div>
+
+        <div>
+            <button id="generate-btn" class="w-full bg-green-500 text-white font-bold px-4 py-3 rounded-md hover:bg-green-600 transition-colors text-lg">
+                Generar Código
+            </button>
+            <div class="mt-4">
+                <label for="output" class="block text-sm font-medium text-gray-700 mb-1">Código Generado (Copia y pega esto en tu archivo portfolio-data.js):</label>
+                <textarea id="output" readonly class="w-full h-64 p-3 font-mono text-sm bg-gray-900 text-green-400 rounded-md border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none"></textarea>
+                <button id="copy-btn" class="mt-2 bg-gray-500 text-white font-semibold px-4 py-2 rounded-md hover:bg-gray-600 transition-colors w-full sm:w-auto">Copiar Código</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const categoriesContainer = document.getElementById('categories-container');
+            const addCategoryBtn = document.getElementById('add-category-btn');
+            const newCategoryNameInput = document.getElementById('new-category-name');
+            const generateBtn = document.getElementById('generate-btn');
+            const outputTextarea = document.getElementById('output');
+            const copyBtn = document.getElementById('copy-btn');
+            const importTextarea = document.getElementById('import-area');
+            const loadDataBtn = document.getElementById('load-data-btn');
+            const clearAllBtn = document.getElementById('clear-all-btn');
+            const statusContainer = document.getElementById('status-message-container');
+            const largePreview = document.getElementById('image-preview-large');
+
+            function createCategoryElement(name) {
+                const categoryBlock = document.createElement('div');
+                categoryBlock.className = 'category-block bg-gray-50 p-4 rounded-lg border';
+                categoryBlock.innerHTML = `<div class="flex justify-between items-center mb-3"><h3 class="editable-title text-lg font-bold text-gray-700">${name}</h3><button class="remove-category-btn text-red-500 hover:text-red-700 font-bold text-xl">&times;</button></div><div class="subcategories-container space-y-3 pl-4 border-l-2"></div><div class="flex gap-2 mt-3 pl-4"><input type="text" placeholder="Nueva subcategoría" class="new-subcategory-name flex-grow p-2 border rounded-md text-sm"><button class="add-subcategory-btn bg-gray-200 text-gray-700 font-semibold px-3 py-1 rounded-md hover:bg-gray-300 text-sm">+</button></div>`;
+                categoriesContainer.appendChild(categoryBlock);
+                return categoryBlock;
+            }
+
+            function createSubcategoryElement(container, name) {
+                const subcategoryBlock = document.createElement('div');
+                subcategoryBlock.className = 'subcategory-block bg-white p-3 rounded-md border';
+                subcategoryBlock.innerHTML = `<div class="flex justify-between items-center mb-2"><h4 class="editable-title font-semibold text-gray-600">${name}</h4><button class="remove-subcategory-btn text-red-500 hover:text-red-700 font-bold">&times;</button></div><div class="images-container space-y-2"></div><div class="images-adder"><div class="flex gap-2 mt-2 flex-wrap"><input type="url" placeholder="URL de la imagen" class="new-image-url flex-grow p-1 border rounded-md text-sm"><button class="add-image-btn bg-blue-100 text-blue-700 font-semibold px-3 py-1 rounded-md hover:bg-blue-200 text-sm">Añadir Foto</button></div><p class="image-limit-message text-xs text-gray-500 mt-1"></p></div>`;
+                container.appendChild(subcategoryBlock);
+                updateImageLimitMessage(subcategoryBlock);
+                return subcategoryBlock;
+            }
+
+            function createImageElement(container, url) {
+                const imageElement = document.createElement('div');
+                imageElement.className = 'image-entry flex items-center gap-2 bg-gray-100 p-1 rounded';
+                imageElement.setAttribute('draggable', 'true');
+                imageElement.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="drag-handle bi bi-grip-vertical flex-shrink-0" viewBox="0 0 16 16"><path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg><button class="star-btn" title="Marcar como imagen principal">☆</button><div class="image-preview-container"><img src="${url}" class="image-preview-thumb w-8 h-8 object-cover rounded cursor-pointer" onerror="this.src='https://placehold.co/32x32/ccc/999?text=URL'"></div><input type="text" value="${url}" class="image-url-display text-xs text-gray-500 bg-transparent flex-grow border-b border-transparent focus:border-blue-500 focus:outline-none min-w-0"><button class="remove-image-btn text-red-400 hover:text-red-600 font-semibold">&times;</button>`;
+                container.appendChild(imageElement);
+                updateImageLimitMessage(container.closest('.subcategory-block'));
+            }
+            
+            function updateImageLimitMessage(subcategoryBlock) {
+                const container = subcategoryBlock.querySelector('.images-container');
+                const adder = subcategoryBlock.querySelector('.images-adder');
+                const messageEl = subcategoryBlock.querySelector('.image-limit-message');
+                const count = container.children.length;
+                const limit = 10; // Limite de fotos
+                
+                messageEl.textContent = `${count} / ${limit} imágenes.`;
+                
+                if (count >= limit) {
+                    adder.style.display = 'none';
+                    messageEl.classList.add('text-red-600', 'font-semibold');
+                } else {
+                    adder.style.display = 'block';
+                    messageEl.classList.remove('text-red-600', 'font-semibold');
+                }
+            }
+
+            function displayMessage(message, isError = false) {
+                statusContainer.textContent = message;
+                statusContainer.className = `status-message p-2 rounded-md text-sm ${isError ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`;
+                setTimeout(() => { statusContainer.textContent = ''; statusContainer.className = 'status-message'; }, 5000);
+            }
+
+            function makeEditable(e) {
+                const target = e.target;
+                if (!target.classList.contains('editable-title')) return;
+                const currentValue = target.textContent;
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = currentValue;
+                input.className = 'font-bold text-gray-700 bg-white border-b-2 border-blue-500 focus:outline-none';
+                if(target.tagName === 'H3') input.className += ' text-lg';
+                if(target.tagName === 'H4') input.className += ' font-semibold';
+                target.replaceWith(input);
+                input.focus();
+                const saveChanges = () => {
+                    const newValue = input.value.trim();
+                    target.textContent = newValue || currentValue;
+                    input.replaceWith(target);
+                };
+                input.addEventListener('blur', saveChanges);
+                input.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') input.blur(); else if (ev.key === 'Escape') { input.value = currentValue; input.blur(); } });
+            }
+            categoriesContainer.addEventListener('dblclick', makeEditable);
+
+            addCategoryBtn.addEventListener('click', () => {
+                const name = newCategoryNameInput.value.trim();
+                if (name) { createCategoryElement(name); newCategoryNameInput.value = ''; }
+            });
+
+            categoriesContainer.addEventListener('click', (e) => {
+                const target = e.target;
+                if (target.classList.contains('add-subcategory-btn')) {
+                    const parentCategory = target.closest('.category-block');
+                    const input = parentCategory.querySelector('.new-subcategory-name');
+                    if (input.value.trim()) { createSubcategoryElement(parentCategory.querySelector('.subcategories-container'), input.value.trim()); input.value = ''; }
+                } else if (target.classList.contains('add-image-btn')) {
+                    const parent = target.closest('.subcategory-block');
+                    const input = parent.querySelector('.new-image-url');
+                    if (input.value.trim()) { createImageElement(parent.querySelector('.images-container'), input.value.trim()); input.value = ''; }
+                } else if (target.classList.contains('remove-category-btn')) {
+                    target.closest('.category-block').remove();
+                } else if (target.classList.contains('remove-subcategory-btn')) {
+                    target.closest('.subcategory-block').remove();
+                } else if (target.classList.contains('remove-image-btn')) {
+                    const imageEntry = target.closest('.image-entry');
+                    const parentSub = imageEntry.closest('.subcategory-block');
+                    imageEntry.remove();
+                    updateImageLimitMessage(parentSub);
+                } else if (target.classList.contains('star-btn')) {
+                    const parentContainer = target.closest('.images-container');
+                    parentContainer.querySelectorAll('.star-btn').forEach(star => { star.textContent = '☆'; star.classList.remove('selected'); });
+                    target.textContent = '⭐';
+                    target.classList.add('selected');
+                }
+            });
+
+            categoriesContainer.addEventListener('mouseover', e => {
+                if (e.target.classList.contains('image-preview-thumb')) {
+                    const rect = e.target.getBoundingClientRect();
+                    largePreview.src = e.target.src;
+                    largePreview.style.display = 'block';
+                    const top = rect.top - largePreview.offsetHeight - 10;
+                    const left = rect.left + (rect.width / 2) - (largePreview.offsetWidth / 2);
+                    largePreview.style.top = `${top < 10 ? rect.bottom + 10 : top}px`;
+                    largePreview.style.left = `${Math.max(10, Math.min(left, window.innerWidth - largePreview.offsetWidth - 10))}px`;
+                }
+            });
+            categoriesContainer.addEventListener('mouseout', e => {
+                if (e.target.classList.contains('image-preview-thumb')) {
+                    largePreview.style.display = 'none';
+                }
+            });
+            
+            categoriesContainer.addEventListener('input', e => {
+                if (e.target.classList.contains('image-url-display')) {
+                    const thumb = e.target.closest('.image-entry').querySelector('.image-preview-thumb');
+                    if (thumb) {
+                        thumb.src = e.target.value;
+                    }
+                }
+            });
+
+            newCategoryNameInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') { e.preventDefault(); addCategoryBtn.click(); }
+            });
+            categoriesContainer.addEventListener('keydown', (e) => {
+                if (e.key !== 'Enter') return;
+                const target = e.target;
+                if (target.classList.contains('new-subcategory-name')) { e.preventDefault(); target.nextElementSibling.click(); } 
+                else if (target.classList.contains('new-image-url')) { e.preventDefault(); target.nextElementSibling.click(); }
+            });
+
+            let draggingElement = null;
+
+            categoriesContainer.addEventListener('dragstart', e => {
+                if (e.target.classList.contains('image-entry')) {
+                    draggingElement = e.target;
+                    setTimeout(() => e.target.classList.add('dragging'), 0);
+                }
+            });
+
+            categoriesContainer.addEventListener('dragend', e => {
+                if (draggingElement) {
+                    draggingElement.classList.remove('dragging');
+                    draggingElement = null;
+                    document.querySelectorAll('.drag-over-gap').forEach(gap => gap.remove());
+                }
+            });
+
+            categoriesContainer.addEventListener('dragover', e => {
+                e.preventDefault();
+                const container = e.target.closest('.images-container');
+                if (!container) return;
+                document.querySelectorAll('.drag-over-gap').forEach(gap => gap.remove());
+                const afterElement = getDragAfterElement(container, e.clientY);
+                const gap = document.createElement('div');
+                gap.className = 'drag-over-gap';
+                if (afterElement == null) {
+                    container.appendChild(gap);
+                } else {
+                    container.insertBefore(gap, afterElement);
+                }
+            });
+            
+            categoriesContainer.addEventListener('drop', e => {
+                e.preventDefault();
+                const container = e.target.closest('.images-container');
+                if (!container) return;
+                const gap = container.querySelector('.drag-over-gap');
+                if (gap) {
+                    container.insertBefore(draggingElement, gap);
+                    gap.remove();
+                }
+            });
+
+            function getDragAfterElement(container, y) {
+                const draggableElements = [...container.querySelectorAll('.image-entry:not(.dragging)')];
+                return draggableElements.reduce((closest, child) => {
+                    const box = child.getBoundingClientRect();
+                    const offset = y - box.top - box.height / 2;
+                    if (offset < 0 && offset > closest.offset) {
+                        return { offset: offset, element: child };
+                    } else {
+                        return closest;
+                    }
+                }, { offset: Number.NEGATIVE_INFINITY }).element;
+            }
+
+            generateBtn.addEventListener('click', () => {
+                const portfolioData = {};
+                categoriesContainer.querySelectorAll('.category-block').forEach(catEl => {
+                    const categoryName = catEl.querySelector('h3').textContent;
+                    portfolioData[categoryName] = {};
+                    catEl.querySelectorAll('.subcategory-block').forEach(subEl => {
+                        const subcategoryName = subEl.querySelector('h4').textContent;
+                        portfolioData[categoryName][subcategoryName] = getImagesFromContainer(subEl.querySelector('.images-container'));
+                    });
+                });
+                outputTextarea.value = `const portfolioData = ${JSON.stringify(portfolioData, null, 4)};`;
+            });
+            
+            function getImagesFromContainer(container) {
+                const allImages = [];
+                let representativeImage = null;
+                container.querySelectorAll('.image-entry').forEach(entry => {
+                    const url = entry.querySelector('.image-url-display').value;
+                    if (url) {
+                        const imageObject = { src: url, alt: `photo` };
+                        allImages.push(imageObject);
+                        if (entry.querySelector('.star-btn.selected')) {
+                            representativeImage = imageObject;
+                        }
+                    }
+                });
+                if (representativeImage) {
+                    return [representativeImage, ...allImages.filter(img => img.src !== representativeImage.src)];
+                }
+                return allImages;
+            }
+
+            copyBtn.addEventListener('click', () => {
+                if(!outputTextarea.value) { displayMessage('No hay nada que copiar.', true); return; }
+                outputTextarea.select(); document.execCommand('copy');
+                copyBtn.textContent = '¡Copiado!';
+                setTimeout(() => { copyBtn.textContent = 'Copiar Código'; }, 2000);
+            });
+
+            clearAllBtn.addEventListener('click', () => {
+                categoriesContainer.innerHTML = ''; importTextarea.value = ''; outputTextarea.value = '';
+                displayMessage('Se ha limpiado el editor.', false);
+            });
+
+            loadDataBtn.addEventListener('click', () => {
+                let text = importTextarea.value.trim();
+                if (!text) { displayMessage('El área de importación está vacía.', true); return; }
+                const objectMatch = text.match(/\{[\s\S]*\}/);
+                if (!objectMatch) { displayMessage('No se encontró un objeto JSON válido.', true); return; }
+                try {
+                    const data = new Function('return ' + objectMatch[0])();
+                    categoriesContainer.innerHTML = ''; 
+                    for (const categoryName in data) {
+                        const categoryBlock = createCategoryElement(categoryName);
+                        const subcategoriesContainer = categoryBlock.querySelector('.subcategories-container');
+                        for (const subcategoryName in data[categoryName]) {
+                            const subcategoryBlock = createSubcategoryElement(subcategoriesContainer, subcategoryName);
+                            const subcategoryData = data[categoryName][subcategoryName];
+                            if (Array.isArray(subcategoryData)) {
+                                const imagesContainer = subcategoryBlock.querySelector('.images-container');
+                                subcategoryData.forEach((image, index) => {
+                                    if (image && image.src) {
+                                        createImageElement(imagesContainer, image.src);
+                                        if (index === 0) { imagesContainer.lastElementChild.querySelector('.star-btn').click(); }
+                                    }
+                                });
+                            }
+                        }
+                    }
+                    displayMessage('¡Estructura cargada con éxito!', false);
+                } catch (error) {
+                    displayMessage('Error al procesar los datos. Revisa la sintaxis de tu código.', true);
+                    console.error("Error de parseo:", error);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
