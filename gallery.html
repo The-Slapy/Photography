@@ -3,502 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gabriel Rmz Photography - v5</title>
-    <link rel="icon" href="Logo/icon.png">
-    
-    <!-- Tailwind CSS -->
+    <title>Generador de Código para Portafolio v2</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        dark: {
-                            background: '#0f172a', surface: '#1e293b',
-                            text: { primary: '#e2e8f0', secondary: '#94a3b8' },
-                            border: '#334155'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    
-    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-
     <style>
         body { font-family: 'Inter', sans-serif; }
-        .control-btn {
-             background-color: transparent;
-             padding: 0.5rem;
-             border-radius: 9999px;
-             color: #6b7280; /* text-gray-500 */
-             transition: background-color 0.2s, color 0.2s;
+        .category-block, .subcategory-block {
+            transition: all 0.3s ease;
         }
-        .control-btn:hover {
-            background-color: #f3f4f6; /* hover:bg-gray-100 */
+        #import-area, #output {
+            resize: vertical;
         }
-        .dark .control-btn:hover {
-            background-color: #1e293b; /* dark:hover:bg-dark-surface */
+        .status-message {
+            transition: opacity 0.3s ease;
         }
-        .control-btn:focus {
-            outline: 2px solid transparent;
-            outline-offset: 2px;
-            box-shadow: 0 0 0 2px #d1d5db; /* focus:ring-2 focus:ring-gray-300 */
-        }
-        .dark .control-btn:focus {
-            box-shadow: 0 0 0 2px #334155; /* dark:focus:ring-dark-border */
-        }
-
-        .filter-btn.active { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
-        
-        /* Grid View Styles */
-        .gallery-item {
-            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-            transform: translateY(0);
-        }
-        .gallery-item.hidden {
-            opacity: 0;
-            transform: translateY(40px);
-            pointer-events: none;
-        }
-        
-        /* Thumbnail View Styles (from v1) */
-        .thumbnail {
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-            border: 3px solid transparent;
-        }
-        .thumbnail:hover { transform: scale(1.05); }
-        .thumbnail.active { border-color: #3b82f6; /* blue-500 */ }
-        .main-image-container { aspect-ratio: 1 / 1; }
-        @media (min-width: 768px) { .main-image-container { aspect-ratio: 4 / 5; } }
-        .thumbnail-container { aspect-ratio: 1 / 1; }
-
-        /* Styles for a smoother, more dynamic view transition */
-        main {
+        .editable-title {
+            cursor: text;
             position: relative;
+            padding-right: 20px;
         }
-        .view-container {
-            transition: opacity 0.35s ease-in-out, transform 0.35s ease-in-out;
-            transform: scale(1);
+        .editable-title::after {
+            content: '✎';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            color: #9ca3af;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .editable-title:hover::after {
             opacity: 1;
         }
-        .view-container.is-inactive {
-            opacity: 0;
-            transform: scale(1.03); 
+        #image-preview-large {
+            display: none;
+            position: fixed;
+            width: 250px;
+            height: 250px;
+            object-fit: cover;
+            border: 4px solid white;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+            z-index: 50;
             pointer-events: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
+        }
+        .star-btn {
+            cursor: pointer;
+            font-size: 1.25rem;
+            line-height: 1;
+            transition: color 0.2s ease, transform 0.2s ease;
+            color: #d1d5db; /* Gris por defecto */
+        }
+        .star-btn:hover {
+            transform: scale(1.2);
+        }
+        .star-btn.selected {
+            color: #f59e0b; /* Amarillo/Dorado para la seleccionada */
+        }
+        .image-entry {
+            cursor: grab;
+        }
+        .image-entry.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+        .drag-over-gap {
+            height: 2px;
+            background-color: #3b82f6; /* Azul */
+            margin: 4px 0;
+        }
+        .drag-handle {
+            color: #9ca3af;
         }
     </style>
-    
-    <script>
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
 </head>
-<body class="bg-white text-gray-800 dark:bg-dark-background dark:text-dark-text-primary transition-colors duration-300 antialiased">
-
-    <div id="main-content">
-        <header class="bg-white/80 dark:bg-dark-background/80 backdrop-blur-md shadow-sm dark:shadow-black/20 sticky top-0 z-50 transition-colors duration-300">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-20">
-                    <div>
-                        <a href="#" id="logo-link">
-                            <img id="logo-img" class="h-12 w-auto" src="" alt="Logo del Fotógrafo">
-                        </a>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <nav id="main-nav" class="hidden md:flex items-center space-x-2 lg:space-x-4"></nav>
-                        
-                        <!-- View Switcher Button -->
-                        <button id="view-toggle-btn" type="button" class="control-btn" title="Cambiar vista">
-                            <svg id="view-grid-icon" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <circle cx="4" cy="4" r="1.5" />
-                                <circle cx="10" cy="4" r="1.5" />
-                                <circle cx="16" cy="4" r="1.5" />
-                                <circle cx="4" cy="10" r="1.5" />
-                                <circle cx="10" cy="10" r="1.5" />
-                                <circle cx="16" cy="10" r="1.5" />
-                                <circle cx="4" cy="16" r="1.5" />
-                                <circle cx="10" cy="16" r="1.5" />
-                                <circle cx="16" cy="16" r="1.5" />
-                            </svg>
-                            <svg id="view-thumbnail-icon" class="h-5 w-5 hidden" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M2 3a1 1 0 011-1h14a1 1 0 011 1v14a1 1 0 01-1 1H3a1 1 0 01-1-1V3zm2 1v12h7V4H4zm9 0v3h3V4h-3zm0 5v3h3V9h-3zm0 5v3h3v-3h-3z" clip-rule="evenodd" />
-                            </svg>
-                        </button>
-                        
-                        <!-- Theme Toggle Button -->
-                        <button id="theme-toggle" type="button" class="control-btn" title="Cambiar tema">
-                            <svg id="theme-toggle-dark-icon" class="hidden h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-                            <svg id="theme-toggle-light-icon" class="hidden h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
-                        </button>
-
-                        <div class="md:hidden ml-2">
-                            <button id="mobile-menu-button" class="p-2 rounded-md text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-surface focus:outline-none" title="Abrir menú móvil">
-                                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="mobile-menu" class="md:hidden hidden bg-white dark:bg-dark-surface shadow-lg">
-                <nav id="mobile-nav" class="px-2 pt-2 pb-3 space-y-1 sm:px-3"></nav>
-            </div>
-        </header>
-
-        <main class="container mx-auto p-4 sm:p-6 lg:p-8">
-            <div id="gallery-grid-view" class="view-container">
-                <div id="gallery" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 items-center">
-                    <p id="loading-message" class="col-span-full text-center text-gray-500 dark:text-dark-text-secondary">Cargando fotografías...</p>
-                </div>
-            </div>
-            <div id="gallery-thumbnail-view" class="view-container is-inactive">
-                <!-- Thumbnail view content will be injected here -->
-            </div>
-        </main>
-
-        <div id="lightbox" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden p-4 z-[100]">
-            <button id="close-lightbox" class="absolute top-4 right-4 text-white text-3xl">&times;</button>
-            <img id="lightbox-img" src="" alt="Vista ampliada" class="max-w-full max-h-full rounded-lg shadow-2xl">
-            <button id="prev-lightbox" class="absolute left-4 text-white text-4xl">&#8249;</button>
-            <button id="next-lightbox" class="absolute right-4 text-white text-4xl">&#8250;</button>
-        </div>
-
-        <footer class="bg-gray-50 dark:bg-dark-background mt-12 border-t border-gray-200 dark:border-dark-border transition-colors duration-300">
-            <div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-gray-500 dark:text-dark-text-secondary">
-                <p>&copy; <span id="year"></span> Gabriel Rmz Photography. Todos los derechos reservados.</p>
-                <p class="text-sm mt-2">Sitio web diseñado con ♥</p>
-            </div>
-        </footer>
-    </div>
-    
-    <script src="portfolio-data.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // --- DOM Element Variables ---
-            const logoLink = document.getElementById('logo-link');
-            const logoLightUrl = 'Logo/Logo_negro.png';
-            const logoDarkUrl = 'Logo/Logo_blanco.png';
-            const themeToggleBtn = document.getElementById('theme-toggle');
-            const viewToggleBtn = document.getElementById('view-toggle-btn');
-            const logoImg = document.getElementById('logo-img');
-            const mainNav = document.getElementById('main-nav');
-            const mobileNav = document.getElementById('mobile-nav');
-            const galleryGridView = document.getElementById('gallery-grid-view');
-            const galleryThumbnailView = document.getElementById('gallery-thumbnail-view');
-            const gallery = document.getElementById('gallery');
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-            const lightbox = document.getElementById('lightbox');
-            const lightboxImg = document.getElementById('lightbox-img');
-            const closeLightboxBtn = document.getElementById('close-lightbox');
-            const prevBtn = document.getElementById('prev-lightbox');
-            const nextBtn = document.getElementById('next-lightbox');
-            const loadingMessage = document.getElementById('loading-message');
-            
-            // --- State Variables ---
-            let activeCategory = '';
-            let activeSubcategory = 'All';
-            let currentView = localStorage.getItem('gallery-view') || 'grid'; // 'grid' or 'thumbnail'
-            let currentImages = [];
-            let currentIndex = 0;
-            
-            // --- Event Listeners ---
-            logoLink.addEventListener('click', (e) => { e.preventDefault(); location.reload(); });
-            
-            themeToggleBtn.addEventListener('click', () => {
-                document.documentElement.classList.toggle('dark');
-                localStorage.setItem('color-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-                updateThemeAndLogo();
-            });
-
-            viewToggleBtn.addEventListener('click', () => {
-                currentView = currentView === 'grid' ? 'thumbnail' : 'grid';
-                localStorage.setItem('gallery-view', currentView);
-                updateViewToggleButton();
-                
-                if (activeSubcategory !== 'All') {
-                    if (currentView === 'thumbnail') {
-                        displayThumbnailView(activeSubcategory);
-                    } else {
-                        filterGrid(activeCategory, activeSubcategory);
-                    }
-                }
-            });
-
-            mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
-            gallery.addEventListener('click', handleGridClick);
-
-            // --- Lightbox Listeners ---
-            const closeLightbox = () => lightbox.classList.add('hidden');
-            closeLightboxBtn.addEventListener('click', closeLightbox);
-            lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
-            prevBtn.addEventListener('click', () => navigateLightbox(-1));
-            nextBtn.addEventListener('click', () => navigateLightbox(1));
-            document.addEventListener('keydown', e => { 
-                if (!lightbox.classList.contains('hidden')) { 
-                    if (e.key === 'Escape') closeLightbox(); 
-                    else if (e.key === 'ArrowLeft') navigateLightbox(-1); 
-                    else if (e.key === 'ArrowRight') navigateLightbox(1); 
-                } 
-            });
-
-            // --- Main Functions ---
-            function handleGridClick(e) {
-                const item = e.target.closest('.gallery-item');
-                if (!item || item.classList.contains('hidden')) return;
-                
-                const subcategoryToDisplay = item.dataset.subcategory;
-
-                if (activeSubcategory === 'All') { // We are in representative view
-                    if (currentView === 'grid') {
-                        selectSubcategory(subcategoryToDisplay);
-                    } else {
-                        displayThumbnailView(subcategoryToDisplay);
-                    }
-                } else { // We are in detailed grid view
-                    const imgSrc = item.querySelector('img').src;
-                    currentIndex = currentImages.indexOf(imgSrc);
-                    if (currentIndex > -1) {
-                        lightboxImg.src = imgSrc;
-                        lightbox.classList.remove('hidden');
-                    }
-                }
-            }
-            
-            function displayThumbnailView(subcategory) {
-                activeSubcategory = subcategory;
-                const images = portfolioData[activeCategory]?.[subcategory] || [];
-                if (images.length === 0) return;
-
-                let thumbnailHTML = '';
-                images.forEach((img, index) => {
-                    let thumbSrc = img.src;
-                    if (img.src.includes('res.cloudinary.com')) {
-                        thumbSrc = img.src.replace('/upload/', '/upload/w_400,q_auto/');
-                    }
-                    thumbnailHTML += `
-                        <div class="thumbnail-container">
-                            <img src="${thumbSrc}" data-full-src="${img.src}" alt="${img.alt || `Miniatura ${index + 1}`}" class="thumbnail w-full h-full object-cover rounded-md ${index === 0 ? 'active' : ''}">
-                        </div>`;
-                });
-
-                const viewHTML = `
-                    <div class="subcategory-gallery max-w-5xl mx-auto">
-                        <div class="flex flex-col md:flex-row gap-4 items-center">
-                            <div class="w-full md:w-2/3 main-image-container rounded-lg flex items-center justify-center">
-                                <img id="main-thumbnail-image" src="${images[0].src}" alt="Fotografía principal" class="w-full h-full object-contain transition-opacity duration-300 rounded-lg shadow-xl">
-                            </div>
-                            <div class="w-full md:w-1/3 grid grid-cols-4 md:grid-cols-2 gap-2">
-                                ${thumbnailHTML}
-                            </div>
-                        </div>
-                    </div>`;
-                
-                galleryGridView.classList.add('is-inactive');
-                galleryThumbnailView.innerHTML = viewHTML;
-                galleryThumbnailView.classList.remove('is-inactive');
-
-                galleryThumbnailView.querySelectorAll('.thumbnail').forEach(thumb => {
-                    thumb.addEventListener('click', (e) => {
-                        const clickedThumb = e.target;
-                        const mainImage = document.getElementById('main-thumbnail-image');
-                        
-                        mainImage.style.opacity = 0;
-                        setTimeout(() => {
-                            mainImage.src = clickedThumb.dataset.fullSrc;
-                            mainImage.style.opacity = 1;
-                        }, 200);
-                        
-                        galleryThumbnailView.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
-                        clickedThumb.classList.add('active');
-                    });
-                });
-            }
-
-            function renderAllGridItems() {
-                gallery.innerHTML = ''; 
-                const createImageItem = (img, category, subcategory, isRepresentative) => {
-                    const item = document.createElement('div');
-                    item.className = 'gallery-item hidden cursor-pointer group';
-                    item.style.display = 'none';
-                    item.dataset.category = category;
-                    item.dataset.subcategory = subcategory;
-                    item.dataset.isRepresentative = isRepresentative;
-                    
-                    const imageEl = document.createElement('img');
-                    imageEl.src = img.src;
-                    imageEl.alt = img.alt || 'Fotografía de portafolio';
-                    imageEl.className = 'w-full h-auto object-cover rounded-lg shadow-md dark:shadow-black/20 group-hover:scale-105 transition-transform duration-300';
-                    imageEl.onerror = () => { imageEl.src = 'https://placehold.co/600x600/ccc/999?text=Error' };
-                    
-                    imageEl.onload = () => {
-                        if (imageEl.naturalWidth > imageEl.naturalHeight) {
-                            item.classList.add('md:col-span-2');
-                        }
-                    };
-                    
-                    item.appendChild(imageEl);
-                    gallery.appendChild(item);
-                };
-
-                for (const category in portfolioData) {
-                    for (const subcategoryName in portfolioData[category]) {
-                        const subcategoryContent = portfolioData[category][subcategoryName];
-                        if (Array.isArray(subcategoryContent) && subcategoryContent.length > 0) {
-                            createImageItem(subcategoryContent[0], category, subcategoryName, true);
-                            subcategoryContent.forEach(img => createImageItem(img, category, subcategoryName, false));
-                        }
-                    }
-                }
-            }
-
-            function filterGrid(category, subcategory) {
-                activeSubcategory = subcategory;
-                const allItems = [...gallery.querySelectorAll('.gallery-item')];
-                currentImages = []; 
-                
-                galleryThumbnailView.classList.add('is-inactive');
-                galleryGridView.classList.remove('is-inactive');
-
-                allItems.forEach(item => {
-                    if (!item.classList.contains('hidden')) {
-                        item.classList.add('hidden');
-                    }
-                });
-                
-                setTimeout(() => {
-                    const itemsToShow = [];
-                    allItems.forEach(item => {
-                        const itemCategory = item.dataset.category;
-                        const itemSubcategory = item.dataset.subcategory;
-                        const isRepresentative = item.dataset.isRepresentative === 'true';
-
-                        let shouldShow = false;
-                        if (itemCategory === category) {
-                            if (subcategory === 'All' && isRepresentative) {
-                                shouldShow = true;
-                            } else if (subcategory !== 'All' && itemSubcategory === subcategory && !isRepresentative) {
-                                shouldShow = true;
-                            }
-                        }
-                        
-                        if (shouldShow) {
-                            itemsToShow.push(item);
-                        } else {
-                            item.style.display = 'none';
-                        }
-                    });
-
-                    if (subcategory !== 'All') {
-                        currentImages = itemsToShow.map(item => item.querySelector('img').src);
-                    }
-                    
-                    itemsToShow.forEach((item, index) => {
-                        item.style.display = 'block';
-                        setTimeout(() => {
-                            item.classList.remove('hidden');
-                        }, 50 + (index * 50));
-                    });
-                }, 400);
-            }
-            
-            function selectCategory(category) {
-                activeCategory = category;
-                document.querySelectorAll('#main-nav .filter-btn, #mobile-nav .filter-btn').forEach(btn => {
-                    setButtonState(btn, btn.textContent === category);
-                });
-                filterGrid(category, 'All');
-            }
-
-            function selectSubcategory(subcategory) {
-                filterGrid(activeCategory, subcategory);
-            }
-
-            // --- UI Update Functions ---
-            function updateThemeAndLogo() {
-                const isDarkMode = document.documentElement.classList.contains('dark');
-                document.getElementById('theme-toggle-dark-icon').classList.toggle('hidden', isDarkMode);
-                document.getElementById('theme-toggle-light-icon').classList.toggle('hidden', !isDarkMode);
-                logoImg.src = isDarkMode ? logoDarkUrl : logoLightUrl;
-            };
-
-            function updateViewToggleButton() {
-                document.getElementById('view-grid-icon').classList.toggle('hidden', currentView !== 'grid');
-                document.getElementById('view-thumbnail-icon').classList.toggle('hidden', currentView !== 'thumbnail');
-            }
-
-            function setButtonState(button, isActive) {
-                const activeClasses = ['active', 'bg-gray-800', 'text-white', 'dark:bg-gray-200', 'dark:text-gray-900', 'border-gray-800', 'dark:border-gray-200'];
-                const inactiveClasses = ['border-gray-300', 'dark:border-dark-border', 'text-gray-700', 'dark:text-dark-text-secondary', 'hover:bg-gray-100', 'dark:hover:bg-dark-surface'];
-                button.classList.remove(...(isActive ? inactiveClasses : activeClasses));
-                button.classList.add(...(isActive ? activeClasses : inactiveClasses));
-            }
-            
-            function navigateLightbox(direction) {
-                if (currentImages.length === 0) return;
-                currentIndex = (currentIndex + direction + currentImages.length) % currentImages.length;
-                lightboxImg.src = currentImages[currentIndex];
-            }
-
-            // --- Initialization ---
-            function initialize() {
-                if (typeof portfolioData === 'undefined' || Object.keys(portfolioData).length === 0) {
-                    loadingMessage.textContent = "No se encontraron datos de fotografías.";
-                    return;
-                }
-                loadingMessage.style.display = 'none';
-                
-                updateThemeAndLogo();
-                updateViewToggleButton();
-                renderAllGridItems();
-                
-                const categories = Object.keys(portfolioData);
-                mainNav.innerHTML = '';
-                mobileNav.innerHTML = '';
-                
-                categories.forEach(category => {
-                    const btn = document.createElement('button');
-                    btn.textContent = category;
-                    btn.className = 'filter-btn px-4 py-2 text-sm font-medium rounded-full transition-colors border';
-                    setButtonState(btn, false);
-                    btn.onclick = () => selectCategory(category);
-                    mainNav.appendChild(btn);
-                    
-                    const mobileBtn = document.createElement('button');
-                    mobileBtn.textContent = category;
-                    mobileBtn.className = 'filter-btn block w-full text-left px-3 py-2 rounded-md text-base font-medium';
-                    setButtonState(mobileBtn, false);
-                    mobileBtn.onclick = () => {
-                        selectCategory(category);
-                        mobileMenu.classList.add('hidden');
-                    };
-                    mobileNav.appendChild(mobileBtn);
-                });
-                
-                if (categories.length > 0) {
-                    selectCategory(categories[0]);
-                }
-                
-                document.getElementById('year').textContent = new Date().getFullYear();
-            }
-
-            initialize();
-        });
-    </script>
-</body>
+<body>
+    </body>
 </html>
