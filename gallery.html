@@ -75,7 +75,12 @@
         }
         .thumbnail:hover { transform: scale(1.05); }
         .thumbnail.active { border-color: #3b82f6; /* blue-500 */ }
-        .main-image-container { aspect-ratio: 1 / 1; }
+        
+        /* MODIFICACIÓN: Eliminar el borde de la imagen principal en la vista de miniaturas */
+        .main-image-container { 
+            aspect-ratio: 1 / 1; 
+            border: none; /* Se agregó anteriormente para quitar el borde CSS */
+        }
         @media (min-width: 768px) { .main-image-container { aspect-ratio: 4 / 5; } }
         .thumbnail-container { aspect-ratio: 1 / 1; }
 
@@ -186,7 +191,9 @@
         </footer>
     </div>
     
-    <script src="portfolio-data.js"></script>
+    <!-- Se vuelve a incluir la línea para cargar el archivo externo portfolio-data.js -->
+    <script src="portfolio-data.js"></script> 
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // --- DOM Element Variables ---
@@ -301,7 +308,8 @@
                     <div class="subcategory-gallery max-w-5xl mx-auto">
                         <div class="flex flex-col md:flex-row gap-4 items-center">
                             <div class="w-full md:w-2/3 main-image-container rounded-lg flex items-center justify-center">
-                                <img id="main-thumbnail-image" src="${images[0].src}" alt="Fotografía principal" class="w-full h-full object-contain transition-opacity duration-300 rounded-lg shadow-xl">
+                                <!-- MODIFICACIÓN: Se eliminó la clase 'shadow-xl' para quitar el contorno/sombra -->
+                                <img id="main-thumbnail-image" src="${images[0].src}" alt="Fotografía principal" class="w-full h-full object-contain transition-opacity duration-300 rounded-lg">
                             </div>
                             <div class="w-full md:w-1/3 grid grid-cols-4 md:grid-cols-2 gap-2">
                                 ${thumbnailHTML}
