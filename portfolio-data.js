@@ -39,6 +39,144 @@ const portfolioData = {
             }
         ]
     },
+    "Fashion": {
+        "Vestidos Luis": [
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753347684/6-DSC00626_pfa1dc.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753347684/5-DSC00614_zqrcff.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753347683/7-DSC00634_jcevma.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753347683/8-DSC00637_jejghh.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753349160/2-DSC00532_odmfgl.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753347682/4-DSC00567_g56qdz.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753347682/1-DSC00529_xnfinb.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753347683/3-DSC00566_yaxu5x.jpg",
+                "alt": "photo"
+            }
+        ],
+        "Majo Studio 1": [
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753350075/1-DSC00217_p3djro.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753350076/3-DSC00251_fubdk9.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753350076/2-DSC00230_x0osai.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753350077/4-DSC00255_lllpvt.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753350075/7-DSC00330_jfcczo.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753350077/6-DSC00312_cgm8j6.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753350075/8-DSC00336_dnusxw.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753350076/5-DSC00285_tvakhj.jpg",
+                "alt": "photo"
+            }
+        ],
+        "Victor Pila": [
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753351306/DSC01005_q7kxb7.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753351307/DSC01699_bred78.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753351302/DSC00720_rbgpcx.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753351306/DSC00928_sn0qrh.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753351306/DSC01630_de23he.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753351303/DSC00772_b8ho53.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753351303/DSC00707_m23mb7.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753351303/DSC00901_rectdx.jpg",
+                "alt": "photo"
+            }
+        ],
+        "HL Music": [
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753353889/6-DSC02168_ibejqy.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753353888/5-DSC02309_nll92z.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753353887/4-DSC02358_dmxbqn.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753353886/3-DSC02375_zgd5sx.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753353887/1-DSC02634_jaqyms.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753353887/2-DSC02540_tpbu74.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753353890/7-DSC02154_b5ydf6.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753353891/8-DSC01971_vphlbh.jpg",
+                "alt": "photo"
+            }
+        ]
+    },
     "Urban": {
         "Ely": [
             {
