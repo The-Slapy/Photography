@@ -3,408 +3,606 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Código para Portafolio v2</title>
-    <link href="tailwind.css" rel="stylesheet">
+    <title>Gabriel Rmz Photography - v5</title>
+    <link rel="icon" href="Logo/icon.png">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            background: '#0f172a', surface: '#1e293b',
+                            text: { primary: '#e2e8f0', secondary: '#94a3b8' },
+                            border: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
     <style>
         body { font-family: 'Inter', sans-serif; }
-        .category-block, .subcategory-block {
-            transition: all 0.3s ease;
+        .control-btn {
+             background-color: transparent;
+             padding: 0.5rem;
+             border-radius: 9999px;
+             color: #6b7280; /* text-gray-500 */
+             transition: background-color 0.2s, color 0.2s;
         }
-        #import-area, #output {
-            resize: vertical;
+        .control-btn:hover {
+            background-color: #f3f4f6; /* hover:bg-gray-100 */
         }
-        .status-message {
-            transition: opacity 0.3s ease;
+        .dark .control-btn:hover {
+            background-color: #1e293b; /* dark:hover:bg-dark-surface */
         }
-        .editable-title {
-            cursor: text;
-            position: relative;
-            padding-right: 20px;
+        .control-btn:focus {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+            box-shadow: 0 0 0 2px #d1d5db; /* focus:ring-2 focus:ring-gray-300 */
         }
-        .editable-title::after {
-            content: '✎';
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 12px;
-            color: #9ca3af;
+        .dark .control-btn:focus {
+            box-shadow: 0 0 0 2px #334155; /* dark:focus:ring-dark-border */
+        }
+
+        .filter-btn.active { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        
+        /* Grid View Styles */
+        .gallery-item {
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            transform: translateY(0);
+        }
+        .gallery-item.hidden {
             opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-        .editable-title:hover::after {
-            opacity: 1;
-        }
-        #image-preview-large {
-            display: none;
-            position: fixed;
-            width: 250px;
-            height: 250px;
-            object-fit: cover;
-            border: 4px solid white;
-            border-radius: 0.5rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
-            z-index: 50;
+            transform: translateY(40px);
             pointer-events: none;
         }
-        .star-btn {
+        
+        /* Thumbnail View Styles (from v1) */
+        .thumbnail {
             cursor: pointer;
-            font-size: 1.25rem;
-            line-height: 1;
-            transition: color 0.2s ease, transform 0.2s ease;
-            color: #d1d5db; /* Gris por defecto */
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            border: 3px solid transparent;
         }
-        .star-btn:hover {
-            transform: scale(1.2);
+        .thumbnail:hover { transform: scale(1.05); }
+        .thumbnail.active { border-color: #3b82f6; /* blue-500 */ }
+        
+        /* MODIFICACIÓN: Eliminar el borde de la imagen principal en la vista de miniaturas */
+        .main-image-container { 
+            aspect-ratio: 1 / 1; 
+            border: none; /* Se agregó anteriormente para quitar el borde CSS */
         }
-        .star-btn.selected {
-            color: #f59e0b; /* Amarillo/Dorado para la seleccionada */
+        @media (min-width: 768px) { .main-image-container { aspect-ratio: 4 / 5; } }
+        .thumbnail-container { aspect-ratio: 1 / 1; }
+
+        /* Styles for a smoother, more dynamic view transition */
+        /* Se quitan los paddings específicos de .view-container para manejarlos en el main */
+        .view-container {
+            transition: opacity 0.35s ease-in-out, transform 0.35s ease-in-out;
+            transform: scale(1);
+            opacity: 1;
+            min-height: 0; /* Asegura que el contenedor puede encogerse */
         }
-        .image-entry {
-            cursor: grab;
+       
+        /* is-inactive ahora solo maneja la transición de salida */
+        .view-container.is-inactive {
+            opacity: 0;
+            transform: scale(1.03); 
+            pointer-events: none;
         }
-        .image-entry.dragging {
-            opacity: 0.5;
-            cursor: grabbing;
-        }
-        .drag-over-gap {
-            height: 2px;
-            background-color: #3b82f6; /* Azul */
-            margin: 4px 0;
-        }
-        .drag-handle {
-            color: #9ca3af;
+        /* La clase 'hidden' de Tailwind CSS (display: none) se aplicará y quitará por JavaScript */
+
+        /* Agregado: Estilos para evitar la descarga de imágenes */
+        img {
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none;    /* Firefox */
+            -ms-user-select: none;     /* IE 10+ */
+            user-select: none;         /* Standard */
+            -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-drag: none;   /* Safari */
         }
     </style>
+    
+    <script>
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
 </head>
-<body class="bg-gray-100 p-4 sm:p-6 md:p-8">
+<body class="bg-white text-gray-800 dark:bg-dark-background dark:text-dark-text-primary transition-colors duration-300 antialiased overflow-x-hidden flex flex-col min-h-screen" oncontextmenu="return false;">
 
-    <img id="image-preview-large" src="" alt="Previsualización">
+    <div id="main-content" class="flex flex-col flex-grow">
+        <header class="bg-white/80 dark:bg-dark-background/80 backdrop-blur-md shadow-sm dark:shadow-black/20 sticky top-0 z-50 transition-colors duration-300">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-20">
+                    <div>
+                        <a href="#" id="logo-link">
+                            <img id="logo-img" class="h-12 w-auto" src="" alt="Logo del Fotógrafo">
+                        </a>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <nav id="main-nav" class="hidden md:flex items-center space-x-2 lg:space-x-4"></nav>
+                        
+                        <!-- View Switcher Button -->
+                        <button id="view-toggle-btn" type="button" class="control-btn" title="Cambiar vista">
+                            <svg id="view-grid-icon" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <circle cx="4" cy="4" r="1.5" />
+                                <circle cx="10" cy="4" r="1.5" />
+                                <circle cx="16" cy="4" r="1.5" />
+                                <circle cx="4" cy="10" r="1.5" />
+                                <circle cx="10" cy="10" r="1.5" />
+                                <circle cx="16" cy="10" r="1.5" />
+                                <circle cx="4" cy="16" r="1.5" />
+                                <circle cx="10" cy="16" r="1.5" />
+                                <circle cx="16" cy="16" r="1.5" />
+                            </svg>
+                            <svg id="view-thumbnail-icon" class="h-5 w-5 hidden" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M2 3a1 1 0 011-1h14a1 1 0 011 1v14a1 1 0 01-1 1H3a1 1 0 01-1-1V3zm2 1v12h7V4H4zm9 0v3h3V4h-3zm0 5v3h3V9h-3zm0 5v3h3v-3h-3z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                        
+                        <!-- Theme Toggle Button -->
+                        <button id="theme-toggle" type="button" class="control-btn" title="Cambiar tema">
+                            <svg id="theme-toggle-dark-icon" class="hidden h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                            <svg id="theme-toggle-light-icon" class="hidden h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                        </button>
 
-    <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-lg">
-        <div class="mb-6 border-b pb-4">
-            <h1 class="text-2xl font-bold text-gray-800">Generador de Código para Portafolio v2</h1>
-            <p class="text-gray-600 mt-1">Añade o importa tus galerías. Cada subcategoría tiene un límite de 8 fotos.</p>
-        </div>
-
-        <div class="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <h2 class="text-lg font-semibold text-blue-800 mb-2">Importar y Editar Estructura Existente</h2>
-            <p class="text-sm text-blue-700 mb-2">Pega aquí tu código `portfolioData` para editarlo.</p>
-            <textarea id="import-area" placeholder="Pega aquí tu código. Funciona con 'const portfolioData = { ... };' o solo con '{ ... }'." class="w-full h-32 p-2 font-mono text-sm bg-white rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
-            <div id="status-message-container" class="mt-2 text-sm font-medium"></div>
-            <div class="flex gap-2 mt-2">
-                <button id="load-data-btn" class="bg-blue-500 text-white font-semibold px-4 py-2 rounded-md hover:bg-blue-600 transition-colors">Cargar Estructura</button>
-                <button id="clear-all-btn" class="bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-md hover:bg-gray-300 transition-colors">Limpiar Todo</button>
+                        <div class="md:hidden ml-2">
+                            <button id="mobile-menu-button" class="p-2 rounded-md text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-surface focus:outline-none" title="Abrir menú móvil">
+                                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                                    </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <div id="categories-container" class="space-y-4 mb-6"></div>
-
-        <div class="flex gap-2 mb-8">
-            <input type="text" id="new-category-name" placeholder="O crea una nueva categoría (ej. Retratos)" class="flex-grow p-2 border rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-            <button id="add-category-btn" class="bg-indigo-500 text-white font-semibold px-4 py-2 rounded-md hover:bg-indigo-600 transition-colors">Añadir Categoría</button>
-        </div>
-
-        <div>
-            <button id="generate-btn" class="w-full bg-green-500 text-white font-bold px-4 py-3 rounded-md hover:bg-green-600 transition-colors text-lg">
-                Generar Código
-            </button>
-            <div class="mt-4">
-                <label for="output" class="block text-sm font-medium text-gray-700 mb-1">Código Generado (Copia y pega esto en tu archivo portfolio-data.js):</label>
-                <textarea id="output" readonly class="w-full h-64 p-3 font-mono text-sm bg-gray-900 text-green-400 rounded-md border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none"></textarea>
-                <button id="copy-btn" class="mt-2 bg-gray-500 text-white font-semibold px-4 py-2 rounded-md hover:bg-gray-600 transition-colors w-full sm:w-auto">Copiar Código</button>
+            <div id="mobile-menu" class="md:hidden hidden bg-white dark:bg-dark-surface shadow-lg">
+                <nav id="mobile-nav" class="px-2 pt-2 pb-3 space-y-1 sm:px-3"></nav>
             </div>
+        </header>
+
+        <!-- MODIFICACIÓN CLAVE: Se añaden las clases de padding directamente al main -->
+        <main class="container mx-auto flex-grow px-4 pt-4 pb-4 sm:px-6 sm:pt-6 sm:pb-6 lg:px-8 lg:pt-8 lg:pb-8">
+            <div id="gallery-grid-view" class="view-container">
+                <div id="gallery" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 items-center">
+                    <p id="loading-message" class="col-span-full text-center text-gray-500 dark:text-dark-text-secondary">Cargando fotografías...</p>
+                </div>
+            </div>
+            <div id="gallery-thumbnail-view" class="view-container is-inactive hidden">
+                <!-- Thumbnail view content will be injected here -->
+            </div>
+        </main>
+
+        <div id="lightbox" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden p-4 z-[100]">
+            <button id="close-lightbox" class="absolute top-4 right-4 text-white text-3xl">&times;</button>
+            <img id="lightbox-img" src="" alt="Vista ampliada" class="max-w-full max-h-full rounded-lg shadow-2xl" draggable="false">
+            <button id="prev-lightbox" class="absolute left-4 text-white text-4xl">&#8249;</button>
+            <button id="next-lightbox" class="absolute right-4 text-white text-4xl">&#8250;</button>
         </div>
+
+        <footer class="bg-gray-50 dark:bg-dark-background border-t border-gray-200 dark:border-dark-border transition-colors duration-300">
+            <div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-gray-500 dark:text-dark-text-secondary">
+                <p>&copy; <span id="year"></span> Gabriel Rmz Photography. Todos los derechos reservados.</p>
+                <p class="text-sm mt-2">Sitio web diseñado con ♥</p>
+            </div>
+        </footer>
     </div>
+    
+    <!-- Se vuelve a incluir la línea para cargar el archivo externo portfolio-data.js -->
+    <script src="portfolio-data.js"></script> 
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const categoriesContainer = document.getElementById('categories-container');
-            const addCategoryBtn = document.getElementById('add-category-btn');
-            const newCategoryNameInput = document.getElementById('new-category-name');
-            const generateBtn = document.getElementById('generate-btn');
-            const outputTextarea = document.getElementById('output');
-            const copyBtn = document.getElementById('copy-btn');
-            const importTextarea = document.getElementById('import-area');
-            const loadDataBtn = document.getElementById('load-data-btn');
-            const clearAllBtn = document.getElementById('clear-all-btn');
-            const statusContainer = document.getElementById('status-message-container');
-            const largePreview = document.getElementById('image-preview-large');
-
-            function createCategoryElement(name) {
-                const categoryBlock = document.createElement('div');
-                categoryBlock.className = 'category-block bg-gray-50 p-4 rounded-lg border';
-                categoryBlock.innerHTML = `<div class="flex justify-between items-center mb-3"><h3 class="editable-title text-lg font-bold text-gray-700">${name}</h3><button class="remove-category-btn text-red-500 hover:text-red-700 font-bold text-xl">&times;</button></div><div class="subcategories-container space-y-3 pl-4 border-l-2"></div><div class="flex gap-2 mt-3 pl-4"><input type="text" placeholder="Nueva subcategoría" class="new-subcategory-name flex-grow p-2 border rounded-md text-sm"><button class="add-subcategory-btn bg-gray-200 text-gray-700 font-semibold px-3 py-1 rounded-md hover:bg-gray-300 text-sm">+</button></div>`;
-                categoriesContainer.appendChild(categoryBlock);
-                return categoryBlock;
-            }
-
-            function createSubcategoryElement(container, name) {
-                const subcategoryBlock = document.createElement('div');
-                subcategoryBlock.className = 'subcategory-block bg-white p-3 rounded-md border';
-                subcategoryBlock.innerHTML = `<div class="flex justify-between items-center mb-2"><h4 class="editable-title font-semibold text-gray-600">${name}</h4><button class="remove-subcategory-btn text-red-500 hover:text-red-700 font-bold">&times;</button></div><div class="images-container space-y-2"></div><div class="images-adder"><div class="flex gap-2 mt-2 flex-wrap"><input type="url" placeholder="URL de la imagen" class="new-image-url flex-grow p-1 border rounded-md text-sm"><button class="add-image-btn bg-blue-100 text-blue-700 font-semibold px-3 py-1 rounded-md hover:bg-blue-200 text-sm">Añadir Foto</button></div><p class="image-limit-message text-xs text-gray-500 mt-1"></p></div>`;
-                container.appendChild(subcategoryBlock);
-                updateImageLimitMessage(subcategoryBlock);
-                return subcategoryBlock;
-            }
-
-            function createImageElement(container, url) {
-                const imageElement = document.createElement('div');
-                imageElement.className = 'image-entry flex items-center gap-2 bg-gray-100 p-1 rounded';
-                imageElement.setAttribute('draggable', 'true');
-                imageElement.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="drag-handle bi bi-grip-vertical flex-shrink-0" viewBox="0 0 16 16"><path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg><button class="star-btn" title="Marcar como imagen principal">☆</button><div class="image-preview-container"><img src="${url}" class="image-preview-thumb w-8 h-8 object-cover rounded cursor-pointer" onerror="this.src='https://placehold.co/32x32/ccc/999?text=URL'"></div><input type="text" value="${url}" class="image-url-display text-xs text-gray-500 bg-transparent flex-grow border-b border-transparent focus:border-blue-500 focus:outline-none min-w-0"><button class="remove-image-btn text-red-400 hover:text-red-600 font-semibold">&times;</button>`;
-                container.appendChild(imageElement);
-                updateImageLimitMessage(container.closest('.subcategory-block'));
-            }
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- DOM Element Variables ---
+            const logoLink = document.getElementById('logo-link');
+            const logoLightUrl = 'Logo/Logo_negro.png';
+            const logoDarkUrl = 'Logo/Logo_blanco.png';
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const viewToggleBtn = document.getElementById('view-toggle-btn');
+            const logoImg = document.getElementById('logo-img');
+            const mainNav = document.getElementById('main-nav');
+            const mobileNav = document.getElementById('mobile-nav');
+            const galleryGridView = document.getElementById('gallery-grid-view');
+            const galleryThumbnailView = document.getElementById('gallery-thumbnail-view');
+            const gallery = document.getElementById('gallery');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            const closeLightboxBtn = document.getElementById('close-lightbox');
+            const prevBtn = document.getElementById('prev-lightbox');
+            const nextBtn = document.getElementById('next-lightbox');
+            const loadingMessage = document.getElementById('loading-message');
             
-            function updateImageLimitMessage(subcategoryBlock) {
-                const container = subcategoryBlock.querySelector('.images-container');
-                const adder = subcategoryBlock.querySelector('.images-adder');
-                const messageEl = subcategoryBlock.querySelector('.image-limit-message');
-                const count = container.children.length;
-                const limit = 10; // Limite de fotos
-                
-                messageEl.textContent = `${count} / ${limit} imágenes.`;
-                
-                if (count >= limit) {
-                    adder.style.display = 'none';
-                    messageEl.classList.add('text-red-600', 'font-semibold');
-                } else {
-                    adder.style.display = 'block';
-                    messageEl.classList.remove('text-red-600', 'font-semibold');
-                }
-            }
-
-            function displayMessage(message, isError = false) {
-                statusContainer.textContent = message;
-                statusContainer.className = `status-message p-2 rounded-md text-sm ${isError ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`;
-                setTimeout(() => { statusContainer.textContent = ''; statusContainer.className = 'status-message'; }, 5000);
-            }
-
-            function makeEditable(e) {
-                const target = e.target;
-                if (!target.classList.contains('editable-title')) return;
-                const currentValue = target.textContent;
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.value = currentValue;
-                input.className = 'font-bold text-gray-700 bg-white border-b-2 border-blue-500 focus:outline-none';
-                if(target.tagName === 'H3') input.className += ' text-lg';
-                if(target.tagName === 'H4') input.className += ' font-semibold';
-                target.replaceWith(input);
-                input.focus();
-                const saveChanges = () => {
-                    const newValue = input.value.trim();
-                    target.textContent = newValue || currentValue;
-                    input.replaceWith(target);
-                };
-                input.addEventListener('blur', saveChanges);
-                input.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') input.blur(); else if (ev.key === 'Escape') { input.value = currentValue; input.blur(); } });
-            }
-            categoriesContainer.addEventListener('dblclick', makeEditable);
-
-            addCategoryBtn.addEventListener('click', () => {
-                const name = newCategoryNameInput.value.trim();
-                if (name) { createCategoryElement(name); newCategoryNameInput.value = ''; }
-            });
-
-            categoriesContainer.addEventListener('click', (e) => {
-                const target = e.target;
-                if (target.classList.contains('add-subcategory-btn')) {
-                    const parentCategory = target.closest('.category-block');
-                    const input = parentCategory.querySelector('.new-subcategory-name');
-                    if (input.value.trim()) { createSubcategoryElement(parentCategory.querySelector('.subcategories-container'), input.value.trim()); input.value = ''; }
-                } else if (target.classList.contains('add-image-btn')) {
-                    const parent = target.closest('.subcategory-block');
-                    const input = parent.querySelector('.new-image-url');
-                    if (input.value.trim()) { createImageElement(parent.querySelector('.images-container'), input.value.trim()); input.value = ''; }
-                } else if (target.classList.contains('remove-category-btn')) {
-                    target.closest('.category-block').remove();
-                } else if (target.classList.contains('remove-subcategory-btn')) {
-                    target.closest('.subcategory-block').remove();
-                } else if (target.classList.contains('remove-image-btn')) {
-                    const imageEntry = target.closest('.image-entry');
-                    const parentSub = imageEntry.closest('.subcategory-block');
-                    imageEntry.remove();
-                    updateImageLimitMessage(parentSub);
-                } else if (target.classList.contains('star-btn')) {
-                    const parentContainer = target.closest('.images-container');
-                    parentContainer.querySelectorAll('.star-btn').forEach(star => { star.textContent = '☆'; star.classList.remove('selected'); });
-                    target.textContent = '⭐';
-                    target.classList.add('selected');
-                }
-            });
-
-            categoriesContainer.addEventListener('mouseover', e => {
-                if (e.target.classList.contains('image-preview-thumb')) {
-                    const rect = e.target.getBoundingClientRect();
-                    largePreview.src = e.target.src;
-                    largePreview.style.display = 'block';
-                    const top = rect.top - largePreview.offsetHeight - 10;
-                    const left = rect.left + (rect.width / 2) - (largePreview.offsetWidth / 2);
-                    largePreview.style.top = `${top < 10 ? rect.bottom + 10 : top}px`;
-                    largePreview.style.left = `${Math.max(10, Math.min(left, window.innerWidth - largePreview.offsetWidth - 10))}px`;
-                }
-            });
-            categoriesContainer.addEventListener('mouseout', e => {
-                if (e.target.classList.contains('image-preview-thumb')) {
-                    largePreview.style.display = 'none';
-                }
-            });
+            // --- State Variables ---
+            let activeCategory = '';
+            let activeSubcategory = 'All';
+            let currentView = localStorage.getItem('gallery-view') || 'grid'; // 'grid' or 'thumbnail'
+            let currentImages = [];
+            let currentIndex = 0;
             
-            categoriesContainer.addEventListener('input', e => {
-                if (e.target.classList.contains('image-url-display')) {
-                    const thumb = e.target.closest('.image-entry').querySelector('.image-preview-thumb');
-                    if (thumb) {
-                        thumb.src = e.target.value;
+            // --- Event Listeners ---
+            logoLink.addEventListener('click', (e) => { e.preventDefault(); location.reload(); });
+            
+            themeToggleBtn.addEventListener('click', () => {
+                document.documentElement.classList.toggle('dark');
+                localStorage.setItem('color-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+                updateThemeAndLogo();
+            });
+
+            viewToggleBtn.addEventListener('click', () => {
+                const prevView = currentView;
+                currentView = currentView === 'grid' ? 'thumbnail' : 'grid';
+                localStorage.setItem('gallery-view', currentView);
+                updateViewToggleButton();
+                
+                const activeViewEl = currentView === 'grid' ? galleryGridView : galleryThumbnailView;
+                const inactiveViewEl = currentView === 'grid' ? galleryThumbnailView : galleryGridView;
+
+                // 1. Iniciar la transición de salida en la vista actual
+                inactiveViewEl.classList.add('is-inactive');
+
+                // 2. Después de la transición de salida (0.35s), ocultar completamente y mostrar la nueva vista
+                setTimeout(() => {
+                    inactiveViewEl.classList.add('hidden'); // Oculta completamente la vista inactiva
+                    
+                    activeViewEl.classList.remove('hidden'); // Muestra la nueva vista (display: block)
+                    // Forzar reflow para que la transición de entrada sea suave
+                    activeViewEl.offsetWidth; 
+                    activeViewEl.classList.remove('is-inactive'); // Iniciar la transición de entrada
+                    
+                    // Si estamos cambiando a vista de miniaturas, mostrar el contenido
+                    if (currentView === 'thumbnail' && activeSubcategory !== 'All') {
+                         displayThumbnailView(activeSubcategory);
+                    } else if (currentView === 'grid' && activeCategory !== '') {
+                        // Si volvemos a la vista de cuadrícula, aplicar el filtro de categoría
+                        filterGrid(activeCategory, activeSubcategory);
+                    }
+
+                    window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll a la parte superior
+                }, 350); // Coincide con la duración de la transición en CSS
+            });
+
+            mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+            gallery.addEventListener('click', handleGridClick);
+
+            // --- Lightbox Listeners ---
+            const closeLightbox = () => lightbox.classList.add('hidden');
+            closeLightboxBtn.addEventListener('click', closeLightbox);
+            lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+            prevBtn.addEventListener('click', () => navigateLightbox(-1));
+            nextBtn.addEventListener('click', () => navigateLightbox(1));
+            document.addEventListener('keydown', e => { 
+                if (!lightbox.classList.contains('hidden')) { 
+                    if (e.key === 'Escape') closeLightbox(); 
+                    else if (e.key === 'ArrowLeft') navigateLightbox(-1); 
+                    else if (e.key === 'ArrowRight') navigateLightbox(1); 
+                } 
+            });
+
+            // --- Main Functions ---
+            function handleGridClick(e) {
+                const item = e.target.closest('.gallery-item');
+                if (!item || item.classList.contains('hidden')) return;
+                
+                const subcategoryToDisplay = item.dataset.subcategory;
+
+                if (activeSubcategory === 'All') { // We are in representative view (grid, show subcategory details)
+                    selectSubcategory(subcategoryToDisplay);
+                } else { // We are in detailed grid view or thumbnail view
+                    const imgSrc = item.querySelector('img').src;
+                    currentIndex = currentImages.indexOf(imgSrc);
+                    if (currentIndex > -1) {
+                        lightboxImg.src = imgSrc;
+                        lightbox.classList.remove('hidden');
                     }
                 }
-            });
-
-            newCategoryNameInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') { e.preventDefault(); addCategoryBtn.click(); }
-            });
-            categoriesContainer.addEventListener('keydown', (e) => {
-                if (e.key !== 'Enter') return;
-                const target = e.target;
-                if (target.classList.contains('new-subcategory-name')) { e.preventDefault(); target.nextElementSibling.click(); } 
-                else if (target.classList.contains('new-image-url')) { e.preventDefault(); target.nextElementSibling.click(); }
-            });
-
-            let draggingElement = null;
-
-            categoriesContainer.addEventListener('dragstart', e => {
-                if (e.target.classList.contains('image-entry')) {
-                    draggingElement = e.target;
-                    setTimeout(() => e.target.classList.add('dragging'), 0);
-                }
-            });
-
-            categoriesContainer.addEventListener('dragend', e => {
-                if (draggingElement) {
-                    draggingElement.classList.remove('dragging');
-                    draggingElement = null;
-                    document.querySelectorAll('.drag-over-gap').forEach(gap => gap.remove());
-                }
-            });
-
-            categoriesContainer.addEventListener('dragover', e => {
-                e.preventDefault();
-                const container = e.target.closest('.images-container');
-                if (!container) return;
-                document.querySelectorAll('.drag-over-gap').forEach(gap => gap.remove());
-                const afterElement = getDragAfterElement(container, e.clientY);
-                const gap = document.createElement('div');
-                gap.className = 'drag-over-gap';
-                if (afterElement == null) {
-                    container.appendChild(gap);
-                } else {
-                    container.insertBefore(gap, afterElement);
-                }
-            });
-            
-            categoriesContainer.addEventListener('drop', e => {
-                e.preventDefault();
-                const container = e.target.closest('.images-container');
-                if (!container) return;
-                const gap = container.querySelector('.drag-over-gap');
-                if (gap) {
-                    container.insertBefore(draggingElement, gap);
-                    gap.remove();
-                }
-            });
-
-            function getDragAfterElement(container, y) {
-                const draggableElements = [...container.querySelectorAll('.image-entry:not(.dragging)')];
-                return draggableElements.reduce((closest, child) => {
-                    const box = child.getBoundingClientRect();
-                    const offset = y - box.top - box.height / 2;
-                    if (offset < 0 && offset > closest.offset) {
-                        return { offset: offset, element: child };
-                    } else {
-                        return closest;
-                    }
-                }, { offset: Number.NEGATIVE_INFINITY }).element;
             }
+            
+            function displayThumbnailView(subcategory) {
+                activeSubcategory = subcategory;
+                const images = portfolioData[activeCategory]?.[subcategory] || [];
+                if (images.length === 0) return;
 
-            generateBtn.addEventListener('click', () => {
-                const portfolioData = {};
-                categoriesContainer.querySelectorAll('.category-block').forEach(catEl => {
-                    const categoryName = catEl.querySelector('h3').textContent;
-                    portfolioData[categoryName] = {};
-                    catEl.querySelectorAll('.subcategory-block').forEach(subEl => {
-                        const subcategoryName = subEl.querySelector('h4').textContent;
-                        portfolioData[categoryName][subcategoryName] = getImagesFromContainer(subEl.querySelector('.images-container'));
+                let thumbnailHTML = '';
+                images.forEach((img, index) => {
+                    let thumbSrc = img.src;
+                    if (img.src.includes('res.cloudinary.com')) {
+                        thumbSrc = img.src.replace('/upload/', '/upload/w_400,q_auto/');
+                    }
+                    thumbnailHTML += `
+                        <div class="thumbnail-container">
+                            <!-- Agregado: draggable="false" para evitar arrastrar la miniatura -->
+                            <img src="${thumbSrc}" data-full-src="${img.src}" alt="${img.alt || `Miniatura ${index + 1}`}" class="thumbnail w-full h-full object-cover rounded-md ${index === 0 ? 'active' : ''}" draggable="false">
+                        </div>`;
+                });
+
+                const viewHTML = `
+                    <div class="subcategory-gallery max-w-5xl mx-auto">
+                        <div class="flex flex-col md:flex-row gap-4 items-center">
+                            <div class="w-full md:w-2/3 main-image-container rounded-lg flex items-center justify-center">
+                                <!-- MODIFICACIÓN: Se eliminó la clase 'shadow-xl' para quitar el contorno/sombra -->
+                                <!-- Agregado: draggable="false" para evitar arrastrar la imagen principal -->
+                                <img id="main-thumbnail-image" src="${images[0].src}" alt="Fotografía principal" class="w-full h-full object-contain transition-opacity duration-300 rounded-lg" draggable="false">
+                            </div>
+                            <div class="w-full md:w-1/3 grid grid-cols-4 md:grid-cols-2 gap-2">
+                                ${thumbnailHTML}
+                            </div>
+                        </div>
+                    </div>`;
+                
+                // Asegurarse de que galleryThumbnailView esté visible y resetear su estado de transición
+                galleryThumbnailView.innerHTML = viewHTML; // Renderiza el contenido primero
+                // Si ya está visible, no queremos un fade-in, solo un reset del scroll
+                if (!galleryThumbnailView.classList.contains('hidden')) {
+                     window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll a la parte superior
+                }
+               
+
+                galleryThumbnailView.querySelectorAll('.thumbnail').forEach(thumb => {
+                    thumb.addEventListener('click', (e) => {
+                        const clickedThumb = e.target;
+                        const mainImage = document.getElementById('main-thumbnail-image');
+                        
+                        mainImage.style.opacity = 0;
+                        setTimeout(() => {
+                            mainImage.src = clickedThumb.dataset.fullSrc;
+                            mainImage.style.opacity = 1;
+                        }, 200);
+                        
+                        galleryThumbnailView.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+                        clickedThumb.classList.add('active');
                     });
                 });
-                outputTextarea.value = `const portfolioData = ${JSON.stringify(portfolioData, null, 4)};`;
-            });
-            
-            function getImagesFromContainer(container) {
-                const allImages = [];
-                let representativeImage = null;
-                container.querySelectorAll('.image-entry').forEach(entry => {
-                    const url = entry.querySelector('.image-url-display').value;
-                    if (url) {
-                        const imageObject = { src: url, alt: `photo` };
-                        allImages.push(imageObject);
-                        if (entry.querySelector('.star-btn.selected')) {
-                            representativeImage = imageObject;
-                        }
-                    }
-                });
-                if (representativeImage) {
-                    return [representativeImage, ...allImages.filter(img => img.src !== representativeImage.src)];
-                }
-                return allImages;
             }
 
-            copyBtn.addEventListener('click', () => {
-                if(!outputTextarea.value) { displayMessage('No hay nada que copiar.', true); return; }
-                outputTextarea.select(); document.execCommand('copy');
-                copyBtn.textContent = '¡Copiado!';
-                setTimeout(() => { copyBtn.textContent = 'Copiar Código'; }, 2000);
-            });
+            function renderAllGridItems() {
+                gallery.innerHTML = ''; // Limpiar la galería para asegurar un nuevo renderizado
+                const allItemsList = []; // Usaremos esta lista para almacenar todos los elementos creados
 
-            clearAllBtn.addEventListener('click', () => {
-                categoriesContainer.innerHTML = ''; importTextarea.value = ''; outputTextarea.value = '';
-                displayMessage('Se ha limpiado el editor.', false);
-            });
+                const createImageItem = (img, category, subcategory, isRepresentative) => {
+                    const item = document.createElement('div');
+                    item.className = 'gallery-item hidden cursor-pointer group'; // Inicia oculto para la animación
+                    item.dataset.category = category;
+                    item.dataset.subcategory = subcategory;
+                    item.dataset.isRepresentative = isRepresentative;
+                    
+                    const imageEl = document.createElement('img');
+                    imageEl.src = img.src;
+                    imageEl.alt = img.alt || 'Fotografía de portafolio';
+                    imageEl.className = 'w-full h-auto object-cover rounded-lg shadow-md dark:shadow-black/20 group-hover:scale-105 transition-transform duration-300';
+                    imageEl.draggable = false; 
+                    imageEl.onerror = () => { imageEl.src = 'https://placehold.co/600x600/ccc/999?text=Error' };
+                    
+                    imageEl.onload = () => {
+                        if (imageEl.naturalWidth > imageEl.naturalHeight) {
+                            item.classList.add('md:col-span-2');
+                        }
+                    };
+                    
+                    item.appendChild(imageEl);
+                    allItemsList.push(item); // Almacenar para uso posterior
+                };
 
-            loadDataBtn.addEventListener('click', () => {
-                let text = importTextarea.value.trim();
-                if (!text) { displayMessage('El área de importación está vacía.', true); return; }
-                const objectMatch = text.match(/\{[\s\S]*\}/);
-                if (!objectMatch) { displayMessage('No se encontró un objeto JSON válido.', true); return; }
-                try {
-                    const data = new Function('return ' + objectMatch[0])();
-                    categoriesContainer.innerHTML = ''; 
-                    for (const categoryName in data) {
-                        const categoryBlock = createCategoryElement(categoryName);
-                        const subcategoriesContainer = categoryBlock.querySelector('.subcategories-container');
-                        for (const subcategoryName in data[categoryName]) {
-                            const subcategoryBlock = createSubcategoryElement(subcategoriesContainer, subcategoryName);
-                            const subcategoryData = data[categoryName][subcategoryName];
-                            if (Array.isArray(subcategoryData)) {
-                                const imagesContainer = subcategoryBlock.querySelector('.images-container');
-                                subcategoryData.forEach((image, index) => {
-                                    if (image && image.src) {
-                                        createImageElement(imagesContainer, image.src);
-                                        if (index === 0) { imagesContainer.lastElementChild.querySelector('.star-btn').click(); }
-                                    }
-                                });
-                            }
+                for (const category in portfolioData) {
+                    for (const subcategoryName in portfolioData[category]) {
+                        const subcategoryContent = portfolioData[category][subcategoryName];
+                        if (Array.isArray(subcategoryContent) && subcategoryContent.length > 0) {
+                            createImageItem(subcategoryContent[0], category, subcategoryName, true); // Representativo
+                            subcategoryContent.forEach(img => createImageItem(img, category, subcategoryName, false)); // Todos los demás
                         }
                     }
-                    displayMessage('¡Estructura cargada con éxito!', false);
-                } catch (error) {
-                    displayMessage('Error al procesar los datos. Revisa la sintaxis de tu código.', true);
-                    console.error("Error de parseo:", error);
                 }
-            });
+                // No se añaden todos al 'gallery' aquí, solo se preparan.
+                // filterGrid se encargará de añadir los elementos correctos.
+            }
+
+            function filterGrid(category, subcategory) {
+                activeSubcategory = subcategory;
+                // Obtenemos una lista fresca de todos los ítems posibles (representativos y detallados)
+                // Esto simula cómo se "tendría" que generar el contenido en cada filtro
+                const allPossibleItems = [];
+                for (const cat in portfolioData) {
+                    for (const subcat in portfolioData[cat]) {
+                        const subcatContent = portfolioData[cat][subcat];
+                        if (Array.isArray(subcatContent) && subcatContent.length > 0) {
+                            // Añadir el representativo si aplica
+                            const repImg = subcatContent[0];
+                            const repItem = document.createElement('div');
+                            repItem.className = 'gallery-item hidden cursor-pointer group';
+                            repItem.dataset.category = cat;
+                            repItem.dataset.subcategory = subcat;
+                            repItem.dataset.isRepresentative = true;
+                            const repImageEl = document.createElement('img');
+                            repImageEl.src = repImg.src;
+                            repImageEl.alt = repImg.alt || 'Fotografía de portafolio';
+                            repImageEl.className = 'w-full h-auto object-cover rounded-lg shadow-md dark:shadow-black/20 group-hover:scale-105 transition-transform duration-300';
+                            repImageEl.draggable = false;
+                            repImageEl.onerror = () => { repImageEl.src = 'https://placehold.co/600x600/ccc/999?text=Error' };
+                            repItem.appendChild(repImageEl);
+                            allPossibleItems.push(repItem);
+
+                            // Añadir los ítems detallados si aplica
+                            subcatContent.forEach(img => {
+                                const detailItem = document.createElement('div');
+                                detailItem.className = 'gallery-item hidden cursor-pointer group';
+                                detailItem.dataset.category = cat;
+                                detailItem.dataset.subcategory = subcat;
+                                detailItem.dataset.isRepresentative = false;
+                                const detailImageEl = document.createElement('img');
+                                detailImageEl.src = img.src;
+                                detailImageEl.alt = img.alt || 'Fotografía de portafolio';
+                                detailImageEl.className = 'w-full h-auto object-cover rounded-lg shadow-md dark:shadow-black/20 group-hover:scale-105 transition-transform duration-300';
+                                detailImageEl.draggable = false;
+                                detailImageEl.onerror = () => { detailImageEl.src = 'https://placehold.co/600x600/ccc/999?text=Error' };
+                                detailItem.appendChild(detailImageEl);
+                                allPossibleItems.push(detailItem);
+                            });
+                        }
+                    }
+                }
+
+                // Asegurarse de que galleryGridView esté activa y se prepare para la transición
+                galleryThumbnailView.classList.add('hidden'); // Ocultar vista de miniaturas
+                galleryGridView.classList.remove('hidden'); // Mostrar vista de cuadrícula
+                galleryGridView.classList.add('is-inactive'); // Iniciar fade out
+
+                // Limpiar la galería para forzar el ajuste de altura
+                gallery.innerHTML = '';
+                currentImages = []; // Resetear imágenes para el lightbox
+
+                // Filtrar y añadir solo los ítems relevantes después de un breve retraso
+                setTimeout(() => {
+                    const itemsToAppend = [];
+                    allPossibleItems.forEach(item => {
+                        const itemCategory = item.dataset.category;
+                        const itemSubcategory = item.dataset.subcategory;
+                        const isRepresentative = item.dataset.isRepresentative === 'true';
+
+                        let shouldShow = false;
+                        if (itemCategory === category) {
+                            if (subcategory === 'All' && isRepresentative) {
+                                shouldShow = true;
+                            } else if (subcategory !== 'All' && itemSubcategory === subcategory && !isRepresentative) {
+                                shouldShow = true;
+                            }
+                        }
+                        
+                        if (shouldShow) {
+                            itemsToAppend.push(item);
+                            gallery.appendChild(item); // Añadir al DOM
+                            if (!isRepresentative) { // Solo añadir a currentImages si no es representativo (para lightbox)
+                                currentImages.push(item.querySelector('img').src);
+                            }
+                        }
+                    });
+
+                    // Forzar reflow y eliminar is-inactive para la transición de entrada
+                    galleryGridView.offsetWidth; // Trigger reflow
+                    galleryGridView.classList.remove('is-inactive');
+
+                    // Animar la entrada de las imágenes una por una
+                    itemsToAppend.forEach((item, index) => {
+                        setTimeout(() => {
+                            item.classList.remove('hidden');
+                        }, 50 + (index * 50));
+                    });
+
+                    window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll a la parte superior
+                }, 350); // Coincide con la duración de la transición CSS
+            }
+            
+            function selectCategory(category) {
+                activeCategory = category;
+                document.querySelectorAll('#main-nav .filter-btn, #mobile-nav .filter-btn').forEach(btn => {
+                    setButtonState(btn, btn.textContent === category);
+                });
+                filterGrid(category, 'All');
+            }
+
+            function selectSubcategory(subcategory) {
+                // Al seleccionar una subcategoría desde la vista de cuadrícula (al hacer clic en una imagen representativa)
+                // Aseguramos que estamos en vista de cuadrícula y filtramos.
+                // Si la vista actual es de miniaturas, displayThumbnailView ya lo maneja
+                if (currentView === 'grid') {
+                    filterGrid(activeCategory, subcategory);
+                } else {
+                    displayThumbnailView(subcategory);
+                }
+            }
+
+            // --- UI Update Functions ---
+            function updateThemeAndLogo() {
+                const isDarkMode = document.documentElement.classList.contains('dark');
+                document.getElementById('theme-toggle-dark-icon').classList.toggle('hidden', isDarkMode);
+                document.getElementById('theme-toggle-light-icon').classList.toggle('hidden', !isDarkMode);
+                logoImg.src = isDarkMode ? logoDarkUrl : logoLightUrl;
+            };
+
+            function updateViewToggleButton() {
+                document.getElementById('view-grid-icon').classList.toggle('hidden', currentView !== 'grid');
+                document.getElementById('view-thumbnail-icon').classList.toggle('hidden', currentView !== 'thumbnail');
+            }
+
+            function setButtonState(button, isActive) {
+                const activeClasses = ['active', 'bg-gray-800', 'text-white', 'dark:bg-gray-200', 'dark:text-gray-900', 'border-gray-800', 'dark:border-gray-200'];
+                const inactiveClasses = ['border-gray-300', 'dark:border-dark-border', 'text-gray-700', 'dark:text-dark-text-secondary', 'hover:bg-gray-100', 'dark:hover:bg-dark-surface'];
+                button.classList.remove(...(isActive ? inactiveClasses : activeClasses));
+                button.classList.add(...(isActive ? activeClasses : inactiveClasses));
+            }
+            
+            function navigateLightbox(direction) {
+                if (currentImages.length === 0) return;
+                currentIndex = (currentIndex + direction + currentImages.length) % currentImages.length;
+                lightboxImg.src = currentImages[currentIndex];
+            }
+
+            // --- Initialization ---
+            function initialize() {
+                if (typeof portfolioData === 'undefined' || Object.keys(portfolioData).length === 0) {
+                    loadingMessage.textContent = "No se encontraron datos de fotografías.";
+                    return;
+                }
+                loadingMessage.style.display = 'none';
+                
+                updateThemeAndLogo();
+                updateViewToggleButton();
+                
+                // Inicializar la vista correcta y ocultar la otra con display: none
+                if (currentView === 'grid') {
+                    galleryGridView.classList.remove('hidden'); 
+                    galleryThumbnailView.classList.add('hidden'); 
+                    galleryThumbnailView.classList.add('is-inactive'); 
+                } else {
+                    galleryGridView.classList.add('hidden'); 
+                    galleryGridView.classList.add('is-inactive'); 
+                    galleryThumbnailView.classList.remove('hidden'); 
+                }
+
+                // Generar las categorías y seleccionar la primera
+                const categories = Object.keys(portfolioData);
+                mainNav.innerHTML = '';
+                mobileNav.innerHTML = '';
+                
+                categories.forEach(category => {
+                    const btn = document.createElement('button');
+                    btn.textContent = category;
+                    btn.className = 'filter-btn px-4 py-2 text-sm font-medium rounded-full transition-colors border';
+                    setButtonState(btn, false);
+                    btn.onclick = () => selectCategory(category);
+                    mainNav.appendChild(btn);
+                    
+                    const mobileBtn = document.createElement('button');
+                    mobileBtn.textContent = category;
+                    mobileBtn.className = 'filter-btn block w-full text-left px-3 py-2 rounded-md text-base font-medium';
+                    setButtonState(mobileBtn, false);
+                    mobileBtn.onclick = () => {
+                        selectCategory(category);
+                        mobileMenu.classList.add('hidden');
+                    };
+                    mobileNav.appendChild(mobileBtn);
+                });
+                
+                if (categories.length > 0) {
+                    selectCategory(categories[0]); // Esto llamará a filterGrid y renderizará la primera categoría
+                }
+                
+                document.getElementById('year').textContent = new Date().getFullYear();
+            }
+
+            initialize();
         });
     </script>
 </body>
