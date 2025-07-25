@@ -331,6 +331,40 @@ const portfolioData = {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753442579/4-DSC03944_yczkns.jpg",
                 "alt": "photo"
             }
+        ],
+        "Anne 2": [
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753441068/DSC03754_uy1mhr.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753442174/DSC03830_bsuc3e.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753441079/DSC03752-Enhanced-NR_tiiwga.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753440960/2-DSC03829_ardbdg.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753440975/1-DSC03819_b9dvnt.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753440975/3-DSC03774_secc1g.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753440976/2-DSC03811_msc0ew.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753442278/DSC03820_i1fsbw.jpg",
+                "alt": "photo"
+            }
         ]
     },
     "Events": {
@@ -374,35 +408,35 @@ const portfolioData = {
         ],
         "ConCon": [
             {
-                "src": "https://res.cloudinary.com/dzfelzmah/image/upload/v1753160147/ConCon-3_nxlgnx.jpg",
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753464622/DSC04722_wgfih5.jpg",
                 "alt": "photo"
             },
             {
-                "src": "https://res.cloudinary.com/dzfelzmah/image/upload/v1753160147/ConCon-2_ie3yp3.jpg",
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753464621/DSC04680_hvpagw.jpg",
                 "alt": "photo"
             },
             {
-                "src": "https://res.cloudinary.com/dzfelzmah/image/upload/v1753160147/ConCon-1_bwiwkg.jpg",
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753464621/DSC04064_c3mn5w.jpg",
                 "alt": "photo"
             },
             {
-                "src": "https://res.cloudinary.com/dzfelzmah/image/upload/v1753160147/ConCon-6_htdh7u.jpg",
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753464620/DSC04709_s47pzl.jpg",
                 "alt": "photo"
             },
             {
-                "src": "https://res.cloudinary.com/dzfelzmah/image/upload/v1753160147/ConCon-4_bje6fv.jpg",
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753464625/DSC05048_fnxzy8.jpg",
                 "alt": "photo"
             },
             {
-                "src": "https://res.cloudinary.com/dzfelzmah/image/upload/v1753160147/ConCon-5_lnpzac.jpg",
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753464623/DSC04836_pematn.jpg",
                 "alt": "photo"
             },
             {
-                "src": "https://res.cloudinary.com/dzfelzmah/image/upload/v1753160148/ConCon-7_kja0rw.jpg",
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753464624/DSC04964_uqqtib.jpg",
                 "alt": "photo"
             },
             {
-                "src": "https://res.cloudinary.com/dzfelzmah/image/upload/v1753160148/ConCon-8_qcbp2f.jpg",
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753464626/DSC05095_rvfems.jpg",
                 "alt": "photo"
             }
         ],

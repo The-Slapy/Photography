@@ -31,7 +31,7 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         .svg-container { width: 90%; max-width: 600px; cursor: pointer; }
-        svg.signature-svg { width: 100%; height: auto; }
+        svg.signature-svg { width: 100%; height: auto; backface-visibility: hidden; }
         .signature-path {
             fill-opacity: 0;
             stroke-width: 2;
@@ -47,6 +47,9 @@
             opacity: 0;
             transform: translateY(20px);
             animation: fade-in-up 0.8s ease-out forwards;
+        }
+        .nav-link-delay {
+            animation-delay: 3.5s;
         }
         @keyframes fade-in-up {
             to {
@@ -67,14 +70,15 @@
 <body class="bg-gradient-to-br from-white to-gray-200 dark:bg-gradient-to-br dark:from-slate-900 dark:to-gray-900 text-gray-800 dark:text-dark-text transition-colors duration-300">
 
     <div class="fixed top-4 right-4 z-10">
-        <button id="theme-toggle" type="button" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800 focus:outline-none">
+        <button id="theme-toggle" type="button" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800 focus:outline-none" aria-label="Toggle theme">
             <svg id="theme-toggle-dark-icon" class="hidden h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
             <svg id="theme-toggle-light-icon" class="hidden h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
         </button>
     </div>
 
     <main class="flex flex-col justify-center items-center min-h-screen text-center p-4">
-        <a href="gallery.html" class="svg-container">
+        <a href="gallery.html" class="svg-container" title="Ir a la galería">
+            <span class="sr-only">Ir a la galería</span>
             <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" class="signature-svg">
                 <!-- Código SVG completo de tu firma -->
                 <g>
@@ -113,43 +117,43 @@
                     <path id="path-24" class="signature-path" d="M1058.57,683.98c0.24,0.24,0.36,0.54,0.36,0.9v39.4c-0.04,0.36-0.18,0.66-0.42,0.9c-0.24,0.24-0.52,0.36-0.84,0.36 c-0.4,0-0.71-0.12-0.93-0.36s-0.33-0.54-0.33-0.9v-19.1h-26.11v19.1c-0.04,0.36-0.18,0.66-0.42,0.9 c-0.24,0.24-0.52,0.36-0.84,0.36c-0.4,0-0.71-0.12-0.93-0.36c-0.22-0.24-0.33-0.54-0.33-0.9v-39.4c0-0.36,0.12-0.66,0.36-0.9 c0.24-0.24,0.54-0.36,0.9-0.36s0.66,0.12,0.9,0.36c0.24,0.24,0.36,0.54,0.36,0.9v17.9h26.11v-17.9c0-0.36,0.12-0.66,0.36-0.9 c0.24-0.24,0.54-0.36,0.9-0.36S1058.33,683.74,1058.57,683.98z"/>
                     <path id="path-25" class="signature-path" d="M1096.24,685.29l-13.65,18.56v20.48c0,0.32-0.12,0.6-0.36,0.84c-0.24,0.24-0.54,0.36-0.9,0.36s-0.66-0.12-0.9-0.36 s-0.36-0.52-0.36-0.84V704.1l-13.71-18.8c-0.16-0.2-0.24-0.46-0.24-0.78c0-0.28,0.13-0.54,0.39-0.78 c0.26-0.24,0.55-0.36,0.87-0.36c0.44,0,0.78,0.18,1.02,0.54l12.93,17.67l12.93-17.67c0.24-0.36,0.58-0.54,1.02-0.54 c0.36,0,0.65,0.13,0.87,0.39c0.22,0.26,0.33,0.51,0.33,0.75C1096.48,684.72,1096.4,684.97,1096.24,685.29z"/>
                 </g>
-            </g>
+        <p class="nav-link nav-link-delay mt-8 text-gray-500 dark:text-gray-400">Haz clic en la firma para entrar</p>
             </svg>
         </a>
-        <p class="nav-link mt-8 text-gray-500 dark:text-gray-400" style="animation-delay: 3.5s;">Haz clic en la firma para entrar</p>
+        <pp class="nav-link nav-link-delay mt-8 text-gray-500 dark:text-gray-400">Haz clic en la firma para entrar</p>
     </main>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const paths = document.querySelectorAll('.signature-path');
-            paths.forEach(path => {
-                const length = path.getTotalLength();
-                path.style.strokeDasharray = length;
-                path.style.strokeDashoffset = length;
-            });
-
-            const themeToggleBtn = document.getElementById('theme-toggle');
-            const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
-            const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
-
-            const updateTheme = () => {
-                const isDarkMode = document.documentElement.classList.contains('dark');
-                themeToggleDarkIcon.classList.toggle('hidden', isDarkMode);
-                themeToggleLightIcon.classList.toggle('hidden', !isDarkMode);
-            };
-
-            themeToggleBtn.addEventListener('click', function() {
-                document.documentElement.classList.toggle('dark');
-                if (document.documentElement.classList.contains('dark')) {
-                    localStorage.setItem('color-theme', 'dark');
-                } else {
-                    localStorage.setItem('color-theme', 'light');
-                }
-                updateTheme();
-            });
-            
-            updateTheme();
-        });
+                document.addEventListener('DOMContentLoaded', () => {
+                    const paths = document.querySelectorAll('.signature-path');
+                    paths.forEach(path => {
+                        const length = path.getTotalLength();
+                        path.style.strokeDasharray = length;
+                        path.style.strokeDashoffset = length;
+                    });
+        
+                    const themeToggleBtn = document.getElementById('theme-toggle');
+                    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+                    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+        
+                    const updateTheme = () => {
+                        const isDarkMode = document.documentElement.classList.contains('dark');
+                        themeToggleDarkIcon.classList.toggle('hidden', !isDarkMode);
+                        themeToggleLightIcon.classList.toggle('hidden', isDarkMode);
+                    };
+        
+                    themeToggleBtn.addEventListener('click', function() {
+                        document.documentElement.classList.toggle('dark');
+                        if (document.documentElement.classList.contains('dark')) {
+                            localStorage.setItem('color-theme', 'dark');
+                        } else {
+                            localStorage.setItem('color-theme', 'light');
+                        }
+                        updateTheme();
+                    });
+        
+                    updateTheme();
+                });
     </script>
 </body>
 </html>

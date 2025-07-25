@@ -16,8 +16,18 @@
         .category-block, .subcategory-block {
             transition: all 0.3s ease;
         }
-        #import-area, #output {
+        #import-area {
             resize: vertical;
+        }
+        /* Oculta el textarea de salida pero permite que el JS interactúe con él */
+        #output {
+            position: absolute; /* Usar absolute o fixed para sacarlo del flujo */
+            left: -9999px; /* Moverlo fuera de la vista */
+            width: 1px; /* Minimizar su tamaño */
+            height: 1px;
+            visibility: hidden; /* Asegurar que no sea visible */
+            opacity: 0;
+            resize: none; /* Eliminar resize para evitar problemas visuales */
         }
         .status-message {
             transition: opacity 0.3s ease;
@@ -167,28 +177,73 @@
             align-items: center;
             flex-grow: 1; /* Permite que el grupo de título ocupe el espacio disponible */
         }
+
+        /* --- NUEVOS ESTILOS MÍNIMOS PARA LA FUNCIONALIDAD DE CSV --- */
+        .url-block {
+            cursor: grab; /* Indica que el elemento es arrastrable */
+        }
+        .url-block:hover {
+            background-color: #f3f4f6; /* Feedback visual al pasar el ratón */
+        }
+        .url-block.opacity-50 { /* Para el efecto de arrastre */
+             opacity: 0.5;
+        }
+        .url-block.border-blue-500 { /* Para el efecto de arrastre */
+            border-color: #3B82F6;
+        }
+
+        /* Estilos para el botón de eliminar URLs importadas */
+        .url-block .remove-url-btn {
+            color: #ef4444; /* red-500 */
+            font-weight: bold;
+            font-size: 0.75rem; /* text-xs */
+            margin-left: 0.5rem; /* ml-2 */
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            line-height: 1;
+        }
+        .url-block .remove-url-btn:hover {
+            color: #dc2626; /* red-600 */
+        }
+
+        /* Estilos para el feedback visual al arrastrar sobre las zonas de destino */
+        .category-block.border-blue-500,
+        .subcategory-block.border-blue-500 {
+            border-style: dashed;
+            border-width: 2px;
+            border-color: #3B82F6; /* blue-500 */
+        }
+        /* --- FIN DE NUEVOS ESTILOS MÍNIMOS --- */
     </style>
 </head>
-<body class="bg-gray-100 p-4 sm:p-6 md:p-8">
+<body class="bg-gray-100 p-4 sm:p-6 md:p-8 flex flex-col lg:flex-row"> <!-- Añadido flex para layout principal -->
 
     <img id="image-preview-large" src="" alt="Previsualización">
 
-    <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-lg">
+    <!-- Panel Izquierdo: Contenido principal del editor -->
+    <div class="flex-1 max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-lg lg:mr-4 mb-4 lg:mb-0">
         <div class="mb-6 border-b pb-4">
             <h1 class="text-2xl font-bold text-gray-800">Generador de Código para Portafolio v2</h1>
-            <p class="text-gray-600 mt-1">Añade o importa tus galerías. Cada subcategoría tiene un límite de 8 fotos.</p>
+            <p class="text-gray-600 mt-1">Añade o importa tus galerías. Cada subcategoría tiene un límite de 10 fotos.</p> <!-- Límite actualizado -->
         </div>
 
         <div class="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
             <h2 class="text-lg font-semibold text-blue-800 mb-2">Importar y Editar Estructura Existente</h2>
             <p class="text-sm text-blue-700 mb-2">Pega aquí tu código `portfolioData` para editarlo.</p>
             <textarea id="import-area" placeholder="Pega aquí tu código. Funciona con 'const portfolioData = { ... };' o solo con '{ ... }'." class="w-full h-32 p-2 font-mono text-sm bg-white rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
-            <div id="status-message-container" class="mt-2 text-sm font-medium"></div>
             <div class="flex gap-2 mt-2">
-                <button id="load-data-btn" class="bg-blue-500 text-white font-semibold px-4 py-2 rounded-md hover:bg-blue-600 transition-colors">Cargar Estructura</button>
+                <button id="load-data-btn" class="bg-blue-500 text-white font-semibold px-4 py-2 rounded-md hover:bg-blue-600 transition-colors">Cargar Estructura del Área de Texto</button>
                 <button id="clear-all-btn" class="bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-md hover:bg-gray-300 transition-colors">Limpiar Todo</button>
                 <button id="open-reorder-modal-btn" class="bg-purple-500 text-white font-semibold px-4 py-2 rounded-md hover:bg-purple-600 transition-colors">Reordenar Estructura</button>
             </div>
+            <div class="mt-4">
+                <p class="text-sm text-blue-700 mb-2">O carga tu `portfolio-data.js` directamente desde GitHub:</p>
+                <!-- Eliminado el input de URL, reemplazado por un botón con la URL fija -->
+                <button id="load-github-data-btn" class="mt-2 bg-gray-700 text-white font-semibold px-4 py-2 rounded-md hover:bg-gray-800 transition-colors w-full">Cargar Portfolio desde GitHub</button>
+            </div>
+            <div id="status-message-container" class="mt-2 text-sm font-medium"></div>
         </div>
 
         <div id="categories-container" class="space-y-4 mb-6"></div>
@@ -203,13 +258,31 @@
                 Generar Código
             </button>
             <div class="mt-4">
-                <label for="output" class="block text-sm font-medium text-gray-700 mb-1">Código Generado (Copia y pega esto en tu archivo portfolio-data.js):</label>
+                <!-- Se ha eliminado el textarea de visualización del código final -->
+                <!-- <label for="output" class="block text-sm font-medium text-gray-700 mb-1">Código Generado (Copia y pega esto en tu archivo portfolio-data.js):</label> -->
                 <textarea id="output" readonly class="w-full h-64 p-3 font-mono text-sm bg-gray-900 text-green-400 rounded-md border border-gray-300 focus:ring-2 focus:ring-green-500 focus:outline-none"></textarea>
                 <button id="copy-btn" class="mt-2 bg-gray-500 text-white font-semibold px-4 py-2 rounded-md hover:bg-gray-600 transition-colors w-full sm:w-auto">Copiar Código</button>
             </div>
         </div>
     </div>
 
+    <!-- Panel Derecho: Importación de CSV y Visualización de URLs -->
+    <div class="w-full lg:w-1/3 p-6 bg-gray-50 border-t lg:border-t-0 lg:border-l border-gray-200 flex flex-col flex-shrink-0 rounded-xl shadow-lg lg:sticky lg:top-4 lg:self-start lg:h-[calc(100vh-2rem)]">
+        <h3 class="text-xl font-semibold mb-4 text-gray-800">Importar y Organizar Imágenes</h3>
+        <label for="csvFileInput" class="sr-only">Seleccionar archivo CSV</label>
+        <input type="file" id="csvFileInput" accept=".csv" class="hidden" title="Seleccionar archivo CSV">
+        <button id="importCsvBtn"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md shadow-md mb-4 w-full">
+            Importar URLs desde CSV
+        </button>
+        <div id="importedUrlsContainer"
+            class="flex-1 overflow-y-auto border border-gray-300 rounded-lg p-3 bg-white shadow-inner">
+            <p class="text-gray-500 text-center text-sm p-4">Arrastra un archivo CSV aquí o usa el botón para ver las URLs. Luego
+                podrás arrastrar las URLs a las categorías o subcategorías en el panel izquierdo.</p>
+        </div>
+    </div>
+
+    <!-- Modal de reordenamiento (se mantiene fuera del flujo principal de columnas) -->
     <div id="reorder-modal" class="modal-overlay hidden">
         <div class="modal-content">
             <h2 class="text-xl font-bold mb-4 text-gray-800">Reordenar Categorías y Subcategorías</h2>
@@ -256,8 +329,51 @@
             const reorderSubcategoriesList = document.getElementById('reorder-subcategories-list');
             const noCategorySelectedMessage = document.getElementById('no-category-selected-message');
 
-            let currentDraggedElement = null; // Para el drag & drop general
+            // --- Nuevos elementos y variables para la funcionalidad de CSV ---
+            const csvFileInput = document.getElementById('csvFileInput');
+            const importCsvBtn = document.getElementById('importCsvBtn');
+            const importedUrlsContainer = document.getElementById('importedUrlsContainer');
+            let draggedUrlData = null; // Para almacenar la URL que se está arrastrando
+            // --- Fin de Nuevos elementos para CSV ---
+
+            // --- Elementos para la carga desde GitHub ---
+            // Se elimina githubUrlInput ya que la URL es fija
+            const loadGithubDataBtn = document.getElementById('load-github-data-btn');
+            // URL fija del archivo portfolio-data.js en GitHub
+            const GITHUB_PORTFOLIO_URL = 'https://raw.githubusercontent.com/The-Slapy/Photography/refs/heads/main/portfolio-data.js';
+            // --- Fin de Elementos para GitHub ---
+
+            let currentDraggedElement = null; // Para el drag & drop general de imágenes del editor
             let selectedCategoryForSub = null; // Para saber qué categoría está seleccionada en el modal de reordenamiento
+
+            // --- Auto-scrolling variables ---
+            let scrollInterval = null;
+            const SCROLL_SPEED = 10; // Pixels per frame
+            const SCROLL_ZONE_HEIGHT = 50; // Pixels from top/bottom edge to trigger scroll
+
+            // Función para iniciar el desplazamiento automático
+            function startAutoScroll(direction) {
+                if (scrollInterval) return; // Evitar múltiples intervalos
+
+                scrollInterval = requestAnimationFrame(function scroll() {
+                    if (direction === 'up') {
+                        window.scrollBy(0, -SCROLL_SPEED);
+                    } else if (direction === 'down') {
+                        window.scrollBy(0, SCROLL_SPEED);
+                    }
+                    scrollInterval = requestAnimationFrame(scroll); // Continuar desplazándose
+                });
+            }
+
+            // Función para detener el desplazamiento automático
+            function stopAutoScroll() {
+                if (scrollInterval) {
+                    cancelAnimationFrame(scrollInterval);
+                    scrollInterval = null;
+                }
+            }
+            // --- Fin de Auto-scrolling variables ---
+
 
             // SVG del icono de flecha para los botones de alternar
             const toggleIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 011.06 0L10 11.94l3.72-3.72a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.22 9.28a.75.75 0 010-1.06z" clip-rule="evenodd" /></svg>`;
@@ -316,7 +432,7 @@
                 const imageElement = document.createElement('div');
                 imageElement.className = 'image-entry flex items-center gap-2 bg-gray-100 p-1 rounded';
                 imageElement.setAttribute('draggable', 'true');
-                imageElement.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="drag-handle bi bi-grip-vertical flex-shrink-0" viewBox="0 0 16 16"><path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg><button class="star-btn" title="Marcar como imagen principal">☆</button><div class="image-preview-container"><img src="${url}" class="image-preview-thumb w-8 h-8 object-cover rounded cursor-pointer" onerror="this.src='https://placehold.co/32x32/ccc/999?text=URL'"></div><input type="text" value="${url}" class="image-url-display text-xs text-gray-500 bg-transparent flex-grow border-b border-transparent focus:border-blue-500 focus:outline-none min-w-0"><button class="remove-image-btn text-red-400 hover:text-red-600 font-semibold">&times;</button>`;
+                imageElement.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="drag-handle bi bi-grip-vertical flex-shrink-0" viewBox="0 0 16 16"><path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg><button class="star-btn" title="Marcar como imagen principal">☆</button><div class="image-preview-container"><img src="${url}" class="image-preview-thumb w-8 h-8 object-cover rounded-sm mr-2 flex-shrink-0" onerror="this.src='https://placehold.co/32x32/ccc/999?text=URL'"></div><input type="text" value="${url}" class="image-url-display text-xs text-gray-500 bg-transparent flex-grow border-b border-transparent focus:border-blue-500 focus:outline-none min-w-0"><button class="remove-image-btn text-red-400 hover:text-red-600 font-semibold">&times;</button>`;
                 container.appendChild(imageElement);
                 updateImageLimitMessage(container.closest('.subcategory-block'));
             }
@@ -326,7 +442,7 @@
                 const adder = subcategoryBlock.querySelector('.images-adder');
                 const messageEl = subcategoryBlock.querySelector('.image-limit-message');
                 const count = container.children.length;
-                const limit = 10; // Limite de fotos
+                const limit = 10; // Limite de fotos, cambiado a 10 como en el HTML
                 
                 messageEl.textContent = `${count} / ${limit} imágenes.`;
                 
@@ -380,7 +496,7 @@
             categoriesContainer.addEventListener('dblclick', makeEditable);
 
             addCategoryBtn.addEventListener('click', () => {
-                const name = newCategoryNameInput.value.trim(); // Corregido: newCategoryNameNameInput a newCategoryNameInput
+                const name = newCategoryNameInput.value.trim();
                 if (name) { createCategoryElement(name); newCategoryNameInput.value = ''; }
             });
 
@@ -501,8 +617,14 @@
             
             categoriesContainer.addEventListener('drop', e => {
                 e.preventDefault();
+                // Eliminar los indicadores visuales de arrastre al soltar
+                document.querySelectorAll('.category-block, .subcategory-block').forEach(el => {
+                    el.classList.remove('border-blue-500', 'border-2', 'border-dashed');
+                });
+
                 const container = e.target.closest('.images-container');
                 if (!container || !currentDraggedElement) return; // Asegúrate de que currentDraggedElement sea una imagen
+
                 const gap = container.querySelector('.drag-over-gap');
                 if (gap) {
                     container.insertBefore(currentDraggedElement, gap);
@@ -535,6 +657,7 @@
                     });
                 });
                 outputTextarea.value = `const portfolioData = ${JSON.stringify(portfolioData, null, 4)};`;
+                displayMessage('¡Código generado con éxito!', false); // Mensaje más conciso
             });
             
             function getImagesFromContainer(container) {
@@ -559,9 +682,46 @@
 
             copyBtn.addEventListener('click', () => {
                 if(!outputTextarea.value) { displayMessage('No hay nada que copiar.', true); return; }
-                outputTextarea.select(); document.execCommand('copy');
-                copyBtn.textContent = '¡Copiado!';
-                setTimeout(() => { copyBtn.textContent = 'Copiar Código'; }, 2000);
+
+                // Guardar estilos originales
+                const originalPosition = outputTextarea.style.position;
+                const originalLeft = outputTextarea.style.left;
+                const originalVisibility = outputTextarea.style.visibility;
+                const originalOpacity = outputTextarea.style.opacity;
+                const originalWidth = outputTextarea.style.width;
+                const originalHeight = outputTextarea.style.height;
+
+                // Hacer el textarea temporalmente "visible" y accesible para la selección/copia,
+                // pero mantenerlo fuera de la vista.
+                outputTextarea.style.position = 'absolute';
+                outputTextarea.style.left = '-9999px';
+                outputTextarea.style.visibility = 'visible';
+                outputTextarea.style.opacity = '1';
+                outputTextarea.style.width = '100px'; // Darle un tamaño usable temporalmente
+                outputTextarea.style.height = '100px'; // Darle un tamaño usable temporalmente
+
+                outputTextarea.select();
+                try {
+                    const successful = document.execCommand('copy');
+                    if (successful) {
+                        displayMessage('¡Código copiado al portapapeles!', false);
+                        copyBtn.textContent = '¡Copiado!'; // Mantiene el feedback en el botón
+                        setTimeout(() => { copyBtn.textContent = 'Copiar Código'; }, 2000);
+                    } else {
+                        displayMessage('Falló la copia del código. Intenta copiarlo manualmente.', true);
+                    }
+                } catch (err) {
+                    console.error('Error al copiar el código: ', err);
+                    displayMessage('Error al copiar el código. Intenta copiarlo manualmente.', true);
+                } finally {
+                    // Restaurar estilos originales
+                    outputTextarea.style.position = originalPosition;
+                    outputTextarea.style.left = originalLeft;
+                    outputTextarea.style.visibility = originalVisibility;
+                    outputTextarea.style.opacity = originalOpacity;
+                    outputTextarea.style.width = originalWidth; 
+                    outputTextarea.style.height = originalHeight;
+                }
             });
 
             clearAllBtn.addEventListener('click', () => {
@@ -569,33 +729,34 @@
                 displayMessage('Se ha limpiado el editor.', false);
             });
 
-            loadDataBtn.addEventListener('click', () => {
-                let text = importTextarea.value.trim();
-                if (!text) { displayMessage('El área de importación está vacía.', true); return; }
+            // Función para cargar los datos en el editor (ya sea desde el textarea o desde GitHub)
+            function loadPortfolioData(dataText) {
+                let text = dataText.trim();
+                if (!text) { displayMessage('No se recibieron datos para cargar.', true); return; }
+                
+                // Intenta extraer el objeto JS de la cadena
                 const objectMatch = text.match(/\{[\s\S]*\}/);
-                if (!objectMatch) { displayMessage('No se encontró un objeto JSON válido.', true); return; }
+                if (!objectMatch) { displayMessage('No se encontró un objeto JSON/JavaScript válido en los datos.', true); return; }
+                
                 try {
+                    // Usa Function para evaluar la cadena y obtener el objeto JavaScript
                     const data = new Function('return ' + objectMatch[0])();
                     categoriesContainer.innerHTML = ''; 
                     for (const categoryName in data) {
                         const categoryBlock = createCategoryElement(categoryName);
-                        // Asegura que la categoría inicie contraída al cargar
                         categoryBlock.classList.add('collapsed'); 
-                        const subcategoriesContainer = categoryBlock.querySelector('.collapsible-content-category .subcategories-container'); // Buscar dentro del contenido colapsable
+                        const subcategoriesContainer = categoryBlock.querySelector('.collapsible-content-category .subcategories-container'); 
                         for (const subcategoryName in data[categoryName]) {
                             const subcategoryBlock = createSubcategoryElement(subcategoriesContainer, subcategoryName);
-                            // Asegura que la subcategoría inicie contraída al cargar
                             subcategoryBlock.classList.add('collapsed'); 
                             const subcategoryData = data[categoryName][subcategoryName];
                             if (Array.isArray(subcategoryData)) {
                                 const imagesContainer = subcategoryBlock.querySelector('.images-container');
-                                // Asegurarse de que la imagen representativa (si existe) se añada primero y se marque
                                 let firstImageMarked = false;
                                 subcategoryData.forEach((image) => {
                                     if (image && image.src) {
                                         createImageElement(imagesContainer, image.src);
-                                        // Si es la primera imagen y no hemos marcado una representativa, o si esta tiene un indicador, márcala
-                                        if (!firstImageMarked && imagesContainer.lastElementChild) {
+                                        if (!firstImageMarked && imagesContainer.lastElementChild && image.isRepresentative) {
                                             imagesContainer.lastElementChild.querySelector('.star-btn').click();
                                             firstImageMarked = true;
                                         }
@@ -606,10 +767,32 @@
                     }
                     displayMessage('¡Estructura cargada con éxito!', false);
                 } catch (error) {
-                    displayMessage('Error al procesar los datos. Revisa la sintaxis de tu código.', true);
+                    displayMessage('Error al procesar los datos. Revisa la sintaxis.', true);
                     console.error("Error de parseo:", error);
                 }
+            }
+
+
+            loadDataBtn.addEventListener('click', () => {
+                loadPortfolioData(importTextarea.value);
             });
+
+            // Nuevo listener para cargar desde GitHub con URL fija
+            loadGithubDataBtn.addEventListener('click', async () => {
+                displayMessage('Cargando datos desde GitHub...', false);
+                try {
+                    const response = await fetch(GITHUB_PORTFOLIO_URL);
+                    if (!response.ok) {
+                        throw new Error(`Error de red o archivo no encontrado: ${response.statusText}`);
+                    }
+                    const dataText = await response.text();
+                    loadPortfolioData(dataText); // Reutiliza la función de carga
+                } catch (error) {
+                    displayMessage(`Error al cargar desde GitHub: ${error.message}`, true);
+                    console.error("Error GitHub:", error);
+                }
+            });
+
 
             // --- Lógica para el reordenamiento de Categorías y Subcategorías ---
 
@@ -795,6 +978,236 @@
                 }
                 selectedCategoryForSub = null; // Resetear la categoría seleccionada
             }
+
+            // --- Lógica para la importación de CSV y Drag & Drop de URLs ---
+
+            // Event listener para el botón "Importar URLs desde CSV"
+            importCsvBtn.addEventListener('click', () => {
+                csvFileInput.click(); // Dispara el input de archivo oculto
+            });
+
+            // Event listener cuando se selecciona un archivo CSV
+            csvFileInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const csvText = e.target.result;
+                        parseCsvAndDisplayUrls(csvText);
+                    };
+                    reader.readAsText(file);
+                }
+            });
+
+            // Parsea el CSV y muestra las URLs en el panel derecho
+            function parseCsvAndDisplayUrls(csvText) {
+                importedUrlsContainer.innerHTML = ''; // Limpiar URLs anteriores
+                const lines = csvText.split('\n').filter(line => line.trim() !== ''); // Filtrar líneas vacías
+                if (lines.length === 0) {
+                    importedUrlsContainer.innerHTML = '<p class="text-gray-500 text-center text-sm p-4">No se encontraron URLs válidas en el CSV.</p>';
+                    return;
+                }
+
+                // Asumiendo que la primera línea es la cabecera y contiene 'url'
+                const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/"/g, '')); // Limpiar comillas
+                const urlColumnIndex = headers.indexOf('url');
+
+                if (urlColumnIndex === -1) {
+                    importedUrlsContainer.innerHTML = '<p class="text-red-500 text-center text-sm p-4">El CSV no contiene una columna llamada "url".</p>';
+                    return;
+                }
+
+                let urlsFound = 0;
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (!line) continue;
+
+                    // Manejar comas dentro de campos usando una regex para split si hay comillas
+                    const values = line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
+                    const url = values[urlColumnIndex] ? values[urlColumnIndex].replace(/^"|"$/g, '').trim() : ''; // Quitar comillas y espacios
+
+                    if (url) {
+                        const urlBlock = document.createElement('div');
+                        urlBlock.className = 'url-block bg-white p-2 mb-2 border border-gray-200 rounded-md shadow-sm cursor-grab text-sm text-gray-700 hover:bg-gray-100 flex items-center justify-between';
+                        urlBlock.draggable = true;
+                        urlBlock.dataset.url = url; // Almacenar la URL en un atributo de datos
+
+                        const imgPreview = document.createElement('img');
+                        imgPreview.src = url;
+                        imgPreview.className = 'w-8 h-8 object-cover rounded-sm mr-2 flex-shrink-0';
+                        imgPreview.onerror = function () {
+                            this.style.display = 'none'; // Ocultar la imagen si falla
+                            const errorText = document.createElement('span');
+                            errorText.textContent = 'URL Inválida';
+                            errorText.className = 'text-red-500';
+                            this.parentElement.insertBefore(errorText, this.nextSibling); // Insertar texto de error
+                            this.parentElement.classList.add('bg-red-50', 'border-red-300'); // Resaltar como error
+                        };
+
+                        const urlText = document.createElement('span');
+                        urlText.className = 'flex-grow truncate'; // Permite truncar URLs largas
+                        urlText.textContent = url.length > 60 ? url.substring(0, 57) + '...' : url;
+                        urlText.title = url; // URL completa al pasar el ratón
+
+                        const removeBtn = document.createElement('button');
+                        removeBtn.className = 'remove-url-btn'; // Clase específica para este botón de eliminar URL
+                        removeBtn.innerHTML = '&times;';
+                        removeBtn.title = 'Eliminar URL de la lista';
+                        removeBtn.addEventListener('click', () => urlBlock.remove());
+
+
+                        urlBlock.appendChild(imgPreview);
+                        urlBlock.appendChild(urlText);
+                        urlBlock.appendChild(removeBtn);
+                        importedUrlsContainer.appendChild(urlBlock);
+                        urlsFound++;
+                    }
+                }
+                if (urlsFound === 0) {
+                    importedUrlsContainer.innerHTML = '<p class="text-gray-500 text-center text-sm p-4">No se encontraron URLs válidas en el CSV.</p>';
+                }
+                addDragListenersToUrls(); // Hacer que los nuevos bloques de URL sean arrastrables
+            }
+
+            // Añade listeners de drag a los elementos de URL recién creados
+            function addDragListenersToUrls() {
+                document.querySelectorAll('.url-block').forEach(urlBlock => {
+                    urlBlock.addEventListener('dragstart', (e) => {
+                        draggedUrlData = e.target.dataset.url; // Guarda la URL que se está arrastrando
+                        e.dataTransfer.effectAllowed = 'copy';
+                        e.dataTransfer.setData('text/plain', draggedUrlData);
+                        e.target.classList.add('opacity-50', 'border-blue-500', 'border-2'); // Feedback visual al arrastrar
+                    });
+
+                    urlBlock.addEventListener('dragend', (e) => {
+                        e.target.classList.remove('opacity-50', 'border-blue-500', 'border-2');
+                        draggedUrlData = null; // Reinicia la URL arrastrada
+                        stopAutoScroll(); // Asegurarse de detener el desplazamiento al finalizar el arrastre
+                    });
+                });
+            }
+
+            // Modificar listeners de dragover para categorías y subcategorías para permitir el drop desde CSV
+            // Se usa categoriesContainer como delegado para capturar los eventos en cualquier categoría/subcategoría
+            document.addEventListener('dragover', (e) => { // Cambiado a document para auto-scroll global
+                const targetCategory = e.target.closest('.category-block');
+                const targetSubcategory = e.target.closest('.subcategory-block');
+
+                // Eliminar estilos de arrastre de todos los posibles destinos antes de añadir el actual
+                document.querySelectorAll('.category-block, .subcategory-block').forEach(el => {
+                    el.classList.remove('border-blue-500', 'border-2', 'border-dashed');
+                });
+
+                // Añadir estilos solo al destino válido actual
+                if (draggedUrlData || currentDraggedElement) { // Solo si algo se está arrastrando
+                    if (targetSubcategory || targetCategory) {
+                        e.preventDefault(); // Permitir la acción de soltar
+                        e.dataTransfer.dropEffect = 'copy'; // Indica que se copiará el elemento
+                        if (targetSubcategory) {
+                            targetSubcategory.classList.add('border-blue-500', 'border-2', 'border-dashed');
+                        } else if (targetCategory) {
+                            targetCategory.classList.add('border-blue-500', 'border-2', 'border-dashed');
+                        }
+                    }
+                }
+
+                // --- Lógica de Auto-desplazamiento ---
+                if (draggedUrlData || currentDraggedElement) { // Solo desplazar si un elemento está siendo arrastrado
+                    const viewportHeight = window.innerHeight;
+                    const mouseY = e.clientY; 
+
+                    if (mouseY < SCROLL_ZONE_HEIGHT) { // Cerca de la parte superior
+                        startAutoScroll('up');
+                    } else if (mouseY > viewportHeight - SCROLL_ZONE_HEIGHT) { // Cerca de la parte inferior
+                        startAutoScroll('down');
+                    } else {
+                        stopAutoScroll(); // Detener el desplazamiento si está fuera de las zonas
+                    }
+                } else {
+                    stopAutoScroll(); // Detener si no hay nada siendo arrastrado
+                }
+            });
+
+            // Global dragend listener para detener el desplazamiento automático
+            document.addEventListener('dragend', () => {
+                stopAutoScroll();
+                // Limpiar feedback visual (ya manejado en el drop, pero bueno tenerlo aquí también)
+                document.querySelectorAll('.category-block, .subcategory-block').forEach(el => {
+                    el.classList.remove('border-blue-500', 'border-2', 'border-dashed');
+                });
+            });
+
+
+            // Modificar listeners de drop para categorías y subcategorías
+            categoriesContainer.addEventListener('drop', (e) => {
+                e.preventDefault();
+                // Eliminar estilos de arrastre de todos los destinos después de soltar
+                document.querySelectorAll('.category-block, .subcategory-block').forEach(el => {
+                    el.classList.remove('border-blue-500', 'border-2', 'border-dashed');
+                });
+                stopAutoScroll(); // Asegurarse de detener el desplazamiento al soltar
+
+                const targetCategoryBlock = e.target.closest('.category-block');
+                const targetSubcategoryBlock = e.target.closest('.subcategory-block');
+
+                // Si se está arrastrando una URL desde el panel CSV
+                if (draggedUrlData) {
+                    let targetImagesContainer = null;
+                    let targetSubcategoryElement = null; // Referencia al bloque DOM de la subcategoría
+
+                    if (targetSubcategoryBlock) {
+                        // Soltado en una subcategoría explícita
+                        targetImagesContainer = targetSubcategoryBlock.querySelector('.images-container');
+                        targetSubcategoryElement = targetSubcategoryBlock;
+                    } else if (targetCategoryBlock) {
+                        // Soltado directamente en un bloque de categoría
+                        // Buscar o crear una subcategoría 'General' dentro de esta categoría
+                        let subcategoriesContainerInCat = targetCategoryBlock.querySelector('.collapsible-content-category .subcategories-container');
+                        let generalSubElement = Array.from(subcategoriesContainerInCat.children).find(
+                            subEl => subEl.querySelector('h4').textContent === 'General' && subEl.classList.contains('subcategory-block')
+                        );
+
+                        if (!generalSubElement) {
+                            // Crear una nueva subcategoría 'General' si no existe
+                            generalSubElement = createSubcategoryElement(subcategoriesContainerInCat, 'General');
+                            generalSubElement.classList.remove('collapsed'); // Asegurar que sea visible si se crea
+                            displayMessage(`Subcategoría "General" creada en "${targetCategoryBlock.querySelector('h3').textContent}".`);
+                        }
+                        targetImagesContainer = generalSubElement.querySelector('.images-container');
+                        targetSubcategoryElement = generalSubElement;
+                    }
+
+                    if (targetImagesContainer && targetSubcategoryElement) {
+                        // Comprobar el límite de imágenes antes de añadir
+                        const currentImagesCount = targetImagesContainer.children.length;
+                        const limit = 10;
+
+                        if (currentImagesCount >= limit) {
+                            displayMessage(`Límite de ${limit} imágenes alcanzado para esta subcategoría.`, true);
+                            return;
+                        }
+
+                        // Añadir la imagen al DOM usando la función existing createImageElement
+                        createImageElement(targetImagesContainer, draggedUrlData);
+                        displayMessage(`Imagen "${draggedUrlData.substring(0, 30)}..." añadida.`);
+
+                        // --- NUEVO: Obscure/Eliminar URL importada después de moverla ---
+                        const originalImportedUrlBlock = importedUrlsContainer.querySelector(`[data-url="${draggedUrlData}"]`);
+                        if (originalImportedUrlBlock) {
+                            originalImportedUrlBlock.remove(); // Elimina el elemento del panel derecho
+                            // Si importedUrlsContainer queda vacío, mostrar un mensaje.
+                            if (importedUrlsContainer.children.length === 0) {
+                                importedUrlsContainer.innerHTML = '<p class="text-gray-500 text-center text-sm p-4">Todas las URLs importadas han sido movidas o eliminadas.</p>';
+                            }
+                        }
+                        // --- FIN NUEVO ---
+
+                    } else {
+                        displayMessage('No se pudo añadir la imagen. Suelta en una categoría o subcategoría válida.', true);
+                    }
+                }
+            });
+            // --- Fin de Lógica para la importación de CSV y Drag & Drop de URLs ---
         });
     </script>
 </body>

@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clasificador y Calificador de Fotos Local</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1 {
+            color: #0056b3;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        input[type="file"] {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        /* Sección de Usuarios */
+        .user-section {
+            background-color: #e0f2f7;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .user-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .user-controls label {
+            font-weight: bold;
+        }
+        .user-controls input[type="text"] {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            flex-grow: 1;
+            min-width: 120px;
+        }
+        .user-controls button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+        }
+        .user-controls button:hover {
+            background-color: #218838;
+        }
+        #userSelect {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            cursor: pointer;
+            flex-grow: 1;
+            min-width: 120px;
+        }
+        .current-user-display {
+            font-weight: bold;
+            color: #0056b3;
+            text-align: center;
+            margin-top: 10px;
+            padding: 5px;
+            border: 1px dashed #0056b3;
+            border-radius: 4px;
+        }
+
+        /* Botón de eliminar usuario */
+        #deleteUserButton {
+            background-color: #dc3545;
+            color: white;
+        }
+        #deleteUserButton:hover {
+            background-color: #c82333;
+        }
+
+
+        .filter-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #e9e9e9;
+            border-radius: 8px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .filter-section label {
+            font-weight: bold;
+        }
+        .filter-section select {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            cursor: pointer;
+        }
+        #photoCountDisplay { /* Nuevo estilo para el contador de fotos */
+            margin-top: 10px;
+            font-weight: bold;
+            color: #555;
+            text-align: center;
+        }
+        #gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .image-item {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            background-color: #fff;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .image-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .image-item img {
+            max-width: 100%;
+            height: 150px;
+            object-fit: contain;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .image-item.marked-for-deletion {
+            opacity: 0.5;
+            border-color: #ff4d4d;
+            background-color: #fff0f0;
+        }
+        .image-item.marked-for-deletion::before {
+            content: "ELIMINAR";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            z-index: 10;
+        }
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.2s ease;
+        }
+        .keep-button {
+            background-color: #28a745;
+            color: white;
+        }
+        .keep-button:hover {
+            background-color: #218838;
+        }
+        .delete-button {
+            background-color: #dc3545;
+            color: white;
+        }
+        .delete-button:hover {
+            background-color: #c82333;
+        }
+        .action-buttons-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+        .action-buttons-group button {
+            flex: 1;
+            font-size: 1em;
+            padding: 10px 20px;
+            min-width: 150px;
+        }
+        #exportDataButton {
+            background-color: #6c757d;
+            color: white;
+        }
+        #exportDataButton:hover {
+            background-color: #5a6268;
+        }
+        #importDataButton {
+            background-color: #17a2b8;
+            color: white;
+        }
+        #importDataButton:hover {
+            background-color: #138496;
+        }
+        /* Nuevo botón para exportar por estrellas */
+        #exportByStarsButton {
+            background-color: #ffc107;
+            color: #333;
+        }
+        #exportByStarsButton:hover {
+            background-color: #e0a800;
+        }
+        #importFileInput {
+            display: none;
+        }
+
+
+        /* Estilos para el Modal de Imagen (ventana emergente de la foto grande) */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: rgba(0,0,0,0.9);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .modal-content {
+            display: block;
+            max-width: 90%;
+            max-height: 80vh;
+            object-fit: contain;
+            transform-origin: center center;
+            transition: transform 0.2s ease-out;
+            cursor: zoom-in;
+        }
+
+        .modal-content.zoomed {
+            cursor: zoom-out;
+        }
+
+        /* Contenedor para la imagen y las flechas para permitir zoom sin mover las flechas */
+        .modal-image-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            max-width: 90%;
+            max-height: 80vh;
+        }
+
+
+        .modal-buttons {
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .modal-buttons button {
+            padding: 12px 25px;
+            font-size: 1.1em;
+        }
+
+        /* Botón de cerrar */
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+        }
+
+        /* ESTILOS PARA LAS ESTRELLAS */
+        .star-rating {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 2.5em;
+            white-space: nowrap;
+        }
+
+        .star {
+            cursor: pointer;
+            color: #ccc;
+            transition: color 0.2s ease;
+            display: inline-block;
+        }
+
+        .star.selected {
+            color: #ffd700;
+        }
+
+        /* ESTILOS PARA LAS ESTRELLAS EN LA MINIATURA */
+        .thumbnail-stars {
+            font-size: 1.2em;
+            color: #ffd700;
+            margin-top: 5px;
+            height: 1.2em;
+        }
+        .thumbnail-stars .star-placeholder {
+            color: #ccc;
+        }
+
+
+        /* ESTILOS PARA LAS FLECHAS DE NAVEGACIÓN EN EL MODAL */
+        .prev, .next {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            width: auto;
+            padding: 16px;
+            margin-top: -50px;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+            transition: 0.6s ease;
+            border-radius: 0 3px 3px 0;
+            -webkit-user-select: none;
+            user-select: none;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1001;
+        }
+
+        .next {
+            right: 0;
+            border-radius: 3px 0 0 3px;
+        }
+
+        .prev {
+            left: 0;
+            border-radius: 0 3px 3px 0;
+        }
+
+        .prev:hover, .next:hover {
+            background-color: rgba(0,0,0,0.8);
+        }
+
+
+        /* Nuevo: Modal de Selección de Usuarios para Exportar */
+        .export-user-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .export-user-modal-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+        }
+
+        .export-user-modal-content h3 {
+            margin-top: 0;
+            color: #0056b3;
+            margin-bottom: 20px;
+        }
+
+        .export-user-modal-content label {
+            display: block;
+            margin-bottom: 10px;
+            text-align: left;
+            font-weight: normal;
+        }
+
+        .export-user-modal-content input[type="checkbox"] {
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        .export-user-modal-buttons {
+            margin-top: 25px;
+            display: flex;
+            justify-content: space-around;
+            gap: 15px;
+        }
+
+        .export-user-modal-buttons button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            flex-grow: 1;
+        }
+
+        #exportSelectedUsersButton {
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+        #exportSelectedUsersButton:hover {
+            background-color: #0056b3;
+        }
+
+        #cancelExportButton {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+        }
+        #cancelExportButton:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Clasificador y Calificador de Fotos Local</h1>
+        <p>Selecciona una o varias imágenes o un archivo .ZIP de tu disco local. Haz clic en una imagen en la galería para verla en grande y decidir si la conservas o la marcas para eliminar, ¡y también para calificarla!</p>
+
+        <label for="imageInput">Selecciona imágenes o un archivo ZIP:</label>
+        <input type="file" id="imageInput" accept="image/*,.zip" multiple title="Selecciona imágenes o un archivo ZIP">
+        
+        <div class="user-section">
+            <h2>Gestión de Usuarios</h2>
+            <div class="user-controls">
+                <label for="userNameInput">Nombre de Usuario:</label>
+                <input type="text" id="userNameInput" placeholder="Nuevo usuario">
+                <button id="createUserButton">Crear Usuario</button>
+                <label for="userSelect">Usuario Activo:</label>
+                <select id="userSelect"></select>
+                <button id="deleteUserButton" class="delete-button">Eliminar Usuario</button>
+            </div>
+            <div class="current-user-display">
+                Usuario Actual: <span id="activeUserName">N/A</span>
+            </div>
+
+            <div class="action-buttons-group">
+                <input type="file" id="importFileInput" accept=".txt">
+                <button id="exportDataButton">Exportar Información (TXT)</button>
+                <button id="exportByStarsButton">Exportar Fotos por Calificación (ZIP)</button>
+                <input type="file" id="importFileInput" accept=".txt" style="display: none;">
+                <button id="importDataButton">Importar Información (TXT)</button>
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <label for="starFilter">Filtrar por Calificación:</label>
+            <select id="starFilter">
+                <option value="0">Todas las Estrellas</option>
+                <option value="1">1 Estrella</option>
+                <option value="2">2 Estrellas</option>
+                <option value="3">3 Estrellas</option>
+                <option value="4">4 Estrellas</option>
+                <option value="5">5 Estrellas</option>
+                <option value="0_stars">0 Estrellas</option>
+            </select>
+        </div>
+
+        <p id="photoCountDisplay">Fotos mostradas: 0 de 0</p> <div id="gallery">
+            </div>
+    </div>
+
+    <div id="imageModal" class="modal">
+        <span class="close" id="closeModalButton">&times;</span>
+        
+        <div class="modal-image-container">
+            <a class="prev" id="prevButton">&#10094;</a>
+            <a class="next" id="nextButton">&#10095;</a>
+            <img class="modal-content" id="modalImageDisplay">
+        </div>
+        
+        <div id="modalStarRating" class="star-rating">
+            <span class="star" data-value="1">&#9733;</span>
+            <span class="star" data-value="2">&#9733;</span>
+            <span class="star" data-value="3">&#9733;</span>
+            <span class="star" data-value="4">&#9733;</span>
+            <span class="star" data-value="5">&#9733;</span>
+        </div>
+
+        <div class="modal-buttons">
+            <button class="keep-button" id="modalKeepButton">Conservar</button>
+            <button class="delete-button" id="modalDeleteButton">Eliminar</button>
+        </div>
+    </div>
+
+    <div id="exportUserSelectionModal" class="export-user-modal">
+        <div class="export-user-modal-content">
+            <span class="close" id="closeExportModalButton">&times;</span>
+            <h3>Seleccionar Usuarios a Exportar</h3>
+            <div id="userCheckboxes">
+                </div>
+            <div class="export-user-modal-buttons">
+                <button id="exportSelectedUsersButton">Exportar Seleccionados</button>
+                <button id="cancelExportButton">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip-utils/0.1.0/jszip-utils.min.js"></script>
+
+    <script>
+        // Obtener referencias a los elementos del DOM
+        const imageInput = document.getElementById('imageInput');
+        const gallery = document.getElementById('gallery');
+        const clearAllButton = document.getElementById('clear-all-button');
+        const exportDataButton = document.getElementById('exportDataButton');
+        const exportByStarsButton = document.getElementById('exportByStarsButton'); // Nuevo botón
+        const importDataButton = document.getElementById('importDataButton');
+        const importFileInput = document.getElementById('importFileInput');
+        const starFilter = document.getElementById('starFilter');
+        const photoCountDisplay = document.getElementById('photoCountDisplay'); 
+
+        // Referencias a elementos de Gestión de Usuarios
+        const userNameInput = document.getElementById('userNameInput');
+        const createUserButton = document.getElementById('createUserButton');
+        const userSelect = document.getElementById('userSelect');
+        const activeUserNameDisplay = document.getElementById('activeUserName');
+        const deleteUserButton = document.getElementById('deleteUserButton');
+
+        // Referencias a los elementos del Modal de Imagen
+        const modal = document.getElementById("imageModal");
+        const modalImageDisplay = document.getElementById("modalImageDisplay");
+        const closeModalButton = document.getElementById("closeModalButton");
+        const modalKeepButton = document.getElementById("modalKeepButton");
+        const modalDeleteButton = document.getElementById("modalDeleteButton");
+        const modalStarRating = document.getElementById("modalStarRating");
+        const modalStars = modalStarRating.querySelectorAll('.star');
+        const prevButton = document.getElementById('prevButton');
+        const nextButton = document.getElementById('nextButton'); 
+        const modalImageContainer = document.querySelector('.modal-image-container');
+
+        // Referencias a elementos del Nuevo Modal de Exportación de Usuario
+        const exportUserSelectionModal = document.getElementById('exportUserSelectionModal');
+        const closeExportModalButton = document.getElementById('closeExportModalButton');
+        const userCheckboxesContainer = document.getElementById('userCheckboxes');
+        const exportSelectedUsersButton = document.getElementById('exportSelectedUsersButton');
+        const cancelExportButton = document.getElementById('cancelExportButton');
+
+
+        // imagesData es nuestra fuente de verdad para todas las imágenes cargadas.
+        // Cada elemento de imagesData tendrá un objeto 'ratings' que mapeará userId a su calificación.
+        // AHORA TAMBIÉN ALMACENARÁ EL OBJETO 'File' ORIGINAL.
+        let imagesData = []; 
+
+        // Gestión de usuarios
+        let users = []; 
+        let activeUser = null; 
+
+        let currentImageIndexInModal = -1;
+        let zoomLevel = 1;
+        const zoomStep = 0.2; 
+
+        // *** Funciones de Gestión de Usuarios ***
+        function initializeUsers() {
+            const storedUsers = localStorage.getItem('photoClassifierUsers');
+            if (storedUsers) {
+                users = JSON.parse(storedUsers);
+            }
+
+            if (users.length === 0) {
+                const defaultUser = { id: 'user_default', name: 'Usuario Principal' };
+                users.push(defaultUser);
+                localStorage.setItem('photoClassifierUsers', JSON.stringify(users));
+            }
+
+            const storedActiveUserId = localStorage.getItem('photoClassifierActiveUser');
+            if (storedActiveUserId) {
+                activeUser = users.find(u => u.id === storedActiveUserId) || users[0];
+            } else {
+                activeUser = users[0];
+            }
+            updateUserSelect();
+            updateActiveUserDisplay();
+        }
+
+        function createUser() {
+            let userName = userNameInput.value.trim();
+            if (userName === '') {
+                alert('Por favor, ingresa un nombre para el usuario.');
+                return;
+            }
+            if (users.some(u => u.name.toLowerCase() === userName.toLowerCase())) {
+                alert('Ya existe un usuario con ese nombre. Por favor, elige otro.');
+                return;
+            }
+
+            const newUser = {
+                id: 'user_' + Date.now(), 
+                name: userName
+            };
+            users.push(newUser);
+            localStorage.setItem('photoClassifierUsers', JSON.stringify(users)); 
+            
+            activeUser = newUser; 
+            userNameInput.value = ''; 
+            updateUserSelect();
+            updateActiveUserDisplay();
+            renderGallery(); 
+        }
+
+        function deleteUser() {
+            if (!activeUser || users.length <= 1) {
+                alert('No se puede eliminar el usuario. Debe haber al menos un usuario.');
+                return;
+            }
+
+            const confirmDelete = confirm(`¿Estás seguro de que quieres eliminar al usuario "${activeUser.name}"? Se borrarán todas sus votaciones.`);
+            if (!confirmDelete) {
+                return;
+            }
+
+            // Eliminar al usuario del array de usuarios
+            users = users.filter(user => user.id !== activeUser.id);
+            localStorage.setItem('photoClassifierUsers', JSON.stringify(users));
+
+            // Eliminar las calificaciones de este usuario de todas las imágenes
+            imagesData.forEach(imageData => {
+                if (imageData.ratings[activeUser.id]) {
+                    delete imageData.ratings[activeUser.id];
+                }
+            });
+            // No es necesario guardar imagesData en localStorage aquí ya que no es persistente entre sesiones
+
+            // Seleccionar un nuevo usuario activo
+            activeUser = users[0]; // Seleccionar el primer usuario restante
+            localStorage.setItem('photoClassifierActiveUser', activeUser.id);
+
+            updateUserSelect();
+            updateActiveUserDisplay();
+            renderGallery(); 
+            alert(`El usuario "${activeUser.name}" ha sido eliminado y sus votaciones borradas.`);
+        }
+
+
+        function updateUserSelect() {
+            userSelect.innerHTML = ''; 
+            users.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user.id;
+                option.textContent = user.name;
+                if (activeUser && user.id === activeUser.id) {
+                    option.selected = true;
+                }
+                userSelect.appendChild(option);
+            });
+        }
+
+        function switchUser() {
+            const selectedUserId = userSelect.value;
+            activeUser = users.find(u => u.id === selectedUserId);
+            localStorage.setItem('photoClassifierActiveUser', activeUser.id);
+            updateActiveUserDisplay();
+            renderGallery();
+        }
+
+        function updateActiveUserDisplay() {
+            activeUserNameDisplay.textContent = activeUser ? activeUser.name : 'N/A';
+        }
+
+        // *** Evento para cuando se seleccionan archivos de imagen o ZIP ***
+        imageInput.addEventListener('change', async function(event) {
+            const files = event.target.files;
+            if (files.length === 0) return;
+
+            // Revocar Object URLs de las imágenes anteriores para liberar memoria
+            imagesData.forEach(imageData => {
+                if (imageData.objectURL) {
+                    URL.revokeObjectURL(imageData.objectURL);
+                }
+            });
+
+            gallery.innerHTML = '';
+            imagesData = []; 
+            starFilter.value = '0'; 
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (file.type.startsWith('image/')) {
+                    const objectURL = URL.createObjectURL(file);
+                    imagesData.push({
+                        src: objectURL,
+                        name: file.name,
+                        ratings: {},
+                        objectURL: objectURL,
+                        originalFile: file // Guardar el objeto File original
+                    });
+                } else if (file.type === 'application/zip' || file.name.endsWith('.zip')) {
+                    await processZipFile(file);
+                }
+            }
+            renderGallery();
+        });
+
+        // Función para procesar archivos ZIP
+        async function processZipFile(zipFile) {
+            try {
+                const zip = await JSZip.loadAsync(zipFile);
+                const imagePromises = [];
+
+                zip.forEach((relativePath, zipEntry) => {
+                    if (!zipEntry.dir && zipEntry.name.match(/\.(jpeg|jpg|gif|png|webp|bmp)$/i)) {
+                        imagePromises.push(
+                            zipEntry.async('blob').then(blob => {
+                                const file = new File([blob], zipEntry.name, { type: blob.type });
+                                const objectURL = URL.createObjectURL(file);
+                                imagesData.push({
+                                    src: objectURL,
+                                    name: zipEntry.name, // Usar el nombre original en el zip
+                                    ratings: {},
+                                    objectURL: objectURL,
+                                    originalFile: file // Guardar el objeto File original
+                                });
+                            })
+                        );
+                    }
+                });
+                await Promise.all(imagePromises);
+            } catch (error) {
+                alert('Error al leer el archivo ZIP: ' + error.message);
+                console.error('Error al leer el archivo ZIP:', error);
+            }
+        }
+
+        // *** Función principal para renderizar la galería ***
+        function renderGallery() {
+            gallery.innerHTML = '';
+            let photosShownCount = 0; 
+            const filterValue = starFilter.value;
+
+            imagesData.forEach((imageData, index) => {
+                // Si el usuario activo no tiene calificaciones para esta imagen, inicializar con valores predeterminados
+                if (!imageData.ratings[activeUser.id]) {
+                    imageData.ratings[activeUser.id] = { rating: 0, isMarkedForDeletion: false };
+                }
+                const userRatingData = imageData.ratings[activeUser.id]; // Ahora siempre existirá
+
+                if (filterValue !== '0' && filterValue !== '0_stars') {
+                    if (userRatingData.rating !== parseInt(filterValue, 10)) {
+                        return;
+                    }
+                } else if (filterValue === '0_stars') {
+                    if (userRatingData.rating !== 0) {
+                        return;
+                    }
+                }
+                
+                const imageItem = document.createElement('div');
+                imageItem.classList.add('image-item');
+                imageItem.dataset.index = index;
+
+                if (userRatingData.isMarkedForDeletion) {
+                    imageItem.classList.add('marked-for-deletion');
+                }
+
+                let thumbnailStarsHTML = '<div class="thumbnail-stars">';
+                for (let i = 1; i <= 5; i++) {
+                    if (i <= userRatingData.rating) {
+                        thumbnailStarsHTML += '&#9733;'; 
+                    } else {
+                        thumbnailStarsHTML += '<span class="star-placeholder">&#9733;</span>';
+                    }
+                }
+                thumbnailStarsHTML += '</div>';
+
+                const imgElement = document.createElement('img');
+                imgElement.src = imageData.objectURL; 
+                imgElement.alt = imageData.name;
+                imgElement.loading = 'lazy'; 
+
+                const pElement = document.createElement('p');
+                pElement.textContent = imageData.name;
+
+                const starsDiv = document.createElement('div');
+                starsDiv.classList.add('thumbnail-stars');
+                starsDiv.innerHTML = thumbnailStarsHTML;
+
+                imageItem.appendChild(imgElement);
+                imageItem.appendChild(pElement);
+                imageItem.appendChild(starsDiv);
+
+                gallery.appendChild(imageItem);
+                photosShownCount++; 
+
+                imageItem.addEventListener('click', function() {
+                    const clickedIndex = parseInt(this.dataset.index);
+                    openModal(clickedIndex);
+                });
+            });
+
+            // Actualizar el contador de fotos mostradas
+            photoCountDisplay.textContent = `Fotos mostradas: ${photosShownCount} de ${imagesData.length}`;
+        }
+
+        // *** Función para abrir el modal de imagen y cargar la imagen ***
+        function openModal(index) {
+            currentImageIndexInModal = index;
+            const imageData = imagesData[currentImageIndexInModal];
+
+            // Si el usuario activo no tiene calificaciones para esta imagen, inicializar con valores predeterminados
+            if (!imageData.ratings[activeUser.id]) {
+                imageData.ratings[activeUser.id] = { rating: 0, isMarkedForDeletion: false };
+            }
+            const userRatingData = imageData.ratings[activeUser.id];
+
+            modalImageDisplay.src = imageData.objectURL; 
+            updateModalStarsDisplay(userRatingData.rating);
+            modal.style.display = "flex";
+            
+            resetZoom();
+            updateNavigationButtons();
+            
+            modal.focus(); 
+            document.addEventListener('keydown', handleKeyboardInput);
+        }
+
+        // *** Función para actualizar la visibilidad de los botones de navegación ***
+        function updateNavigationButtons() {
+            prevButton.style.display = (currentImageIndexInModal > 0) ? 'block' : 'none';
+            nextButton.style.display = (currentImageIndexInModal < imagesData.length - 1) ? 'block' : 'none';
+        }
+
+        // *** Función para la navegación (anterior/siguiente) ***
+        function navigateImage(direction) {
+            let newIndex = currentImageIndexInModal;
+            if (direction === 'prev') {
+                newIndex--;
+            } else { // 'next'
+                newIndex++;
+            }
+
+            if (newIndex >= 0 && newIndex < imagesData.length) {
+                openModal(newIndex);
+            } else {
+                closeModal(); 
+            }
+        }
+
+        // Eventos para los botones de navegación
+        prevButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navigateImage('prev');
+        });
+        nextButton.addEventListener('click', (e) => { 
+            e.stopPropagation();
+            navigateImage('next');
+        });
+
+        // *** Funciones de Zoom ***
+        function resetZoom() {
+            zoomLevel = 1;
+            modalImageDisplay.style.transform = `scale(${zoomLevel})`;
+            modalImageDisplay.classList.remove('zoomed');
+            modalImageDisplay.style.cursor = 'zoom-in';
+            modalImageDisplay.style.left = '0px';
+            modalImageDisplay.style.top = '0px';
+        }
+
+        modalImageDisplay.addEventListener('click', function() {
+            if (zoomLevel === 1) {
+                zoomLevel = 2; // Zoom in
+                modalImageDisplay.classList.add('zoomed');
+                modalImageDisplay.style.cursor = 'zoom-out';
+            } else {
+                resetZoom(); // Zoom out y resetear posición
+            }
+            modalImageDisplay.style.transform = `scale(${zoomLevel})`;
+        });
+
+        // Permitir arrastrar la imagen con zoom
+        let isDragging = false;
+        let startX, startY;
+        let initialLeft, initialTop;
+
+        modalImageDisplay.addEventListener('mousedown', (e) => {
+            if (zoomLevel > 1) {
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                initialLeft = parseInt(modalImageDisplay.style.left || '0', 10);
+                initialTop = parseInt(modalImageDisplay.style.top || '0', 10);
+                modalImageDisplay.style.cursor = 'grabbing';
+            }
+        });
+
+        modalImageDisplay.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+
+            modalImageDisplay.style.left = `${initialLeft + dx}px`;
+            modalImageDisplay.style.top = `${initialTop + dy}px`;
+        });
+
+        modalImageDisplay.addEventListener('mouseup', () => {
+            isDragging = false;
+            if (zoomLevel > 1) {
+                modalImageDisplay.style.cursor = 'grab';
+            } else {
+                modalImageDisplay.style.cursor = 'zoom-in';
+            }
+        });
+
+        modalImageDisplay.addEventListener('mouseleave', () => {
+            isDragging = false;
+             if (zoomLevel > 1) {
+                modalImageDisplay.style.cursor = 'grab';
+            } else {
+                modalImageDisplay.style.cursor = 'zoom-in';
+            }
+        });
+
+        // *** Función auxiliar para generar el HTML de las estrellas (para visualización) ***
+        function getStarHTML(rating) {
+            let starsHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                starsHTML += `<span class="${i <= rating ? 'selected' : ''}">&#9733;</span>`;
+            }
+            return starsHTML;
+        }
+
+        // *** Eventos para el Modal de Imagen ***
+
+        // Cierra el modal de imagen y re-renderiza la galería
+        function closeModal() {
+            modal.style.display = "none";
+            currentImageIndexInModal = -1;
+            resetZoom();
+            renderGallery(); 
+            document.removeEventListener('keydown', handleKeyboardInput);
+        }
+
+        closeModalButton.onclick = closeModal;
+
+        modal.onclick = function(event) {
+            if (event.target === modal || event.target === modalImageContainer) {
+                closeModal();
+            }
+        }
+
+        // Acción para el botón "Conservar" del modal
+        modalKeepButton.addEventListener('click', function() {
+            if (currentImageIndexInModal !== -1 && activeUser) {
+                if (!imagesData[currentImageIndexInModal].ratings[activeUser.id]) {
+                    imagesData[currentImageIndexInModal].ratings[activeUser.id] = {};
+                }
+                imagesData[currentImageIndexInModal].ratings[activeUser.id].isMarkedForDeletion = false;
+                imagesData[currentImageIndexInModal].ratings[activeUser.id].rating = 
+                    imagesData[currentImageIndexInModal].ratings[activeUser.id]?.rating || 0;
+            }
+            navigateImage('next');
+        });
+
+        // Acción para el botón "Eliminar" del modal
+        modalDeleteButton.addEventListener('click', function() {
+            if (currentImageIndexInModal !== -1 && activeUser) {
+                if (!imagesData[currentImageIndexInModal].ratings[activeUser.id]) {
+                    imagesData[currentImageIndexInModal].ratings[activeUser.id] = {};
+                }
+                imagesData[currentImageIndexInModal].ratings[activeUser.id].isMarkedForDeletion = true;
+                imagesData[currentImageIndexInModal].ratings[activeUser.id].rating = 
+                    imagesData[currentImageIndexInModal].ratings[activeUser.id]?.rating || 0;
+            }
+            navigateImage('next');
+        });
+
+        // *** Funciones para el sistema de calificación de estrellas en el modal ***
+
+        // Actualiza visualmente las estrellas en el modal (rellena/vacía)
+        function updateModalStarsDisplay(rating) {
+            modalStars.forEach(star => {
+                if (parseInt(star.dataset.value) <= rating) {
+                    star.classList.add('selected');
+                } else {
+                    star.classList.remove('selected');
+                }
+            });
+        }
+
+        // Maneja el clic en las estrellas del modal para establecer la calificación
+        modalStars.forEach(star => {
+            star.addEventListener('click', function() {
+                if (!activeUser) {
+                    alert('Por favor, selecciona o crea un usuario activo para calificar.');
+                    return;
+                }
+                const newRating = parseInt(this.dataset.value);
+                if (currentImageIndexInModal !== -1) {
+                    if (!imagesData[currentImageIndexInModal].ratings[activeUser.id]) {
+                        imagesData[currentImageIndexInModal].ratings[activeUser.id] = {};
+                    }
+                    imagesData[currentImageIndexInModal].ratings[activeUser.id].rating = newRating;
+                    imagesData[currentImageIndexInModal].ratings[activeUser.id].isMarkedForDeletion = 
+                        imagesData[currentImageIndexInModal].ratings[activeUser.id]?.isMarkedForDeletion || false;
+
+                    updateModalStarsDisplay(newRating);
+                    navigateImage('next'); 
+                }
+            });
+
+            // Efecto hover para las estrellas: previsualiza la calificación al pasar el ratón
+            star.addEventListener('mouseover', function() {
+                const hoverRating = parseInt(this.dataset.value);
+                modalStars.forEach(s => {
+                    if (parseInt(s.dataset.value) <= hoverRating) {
+                        s.classList.add('selected');
+                    } else {
+                        s.classList.remove('selected');
+                    }
+                });
+            });
+
+            // Restaura la calificación real al quitar el ratón
+            star.addEventListener('mouseout', function() {
+                if (currentImageIndexInModal !== -1 && activeUser) {
+                    const userRatingData = imagesData[currentImageIndexInModal].ratings[activeUser.id] || { rating: 0, isMarkedForDeletion: false };
+                    updateModalStarsDisplay(userRatingData.rating);
+                }
+            });
+        });
+
+        // *** Evento para el filtro de estrellas ***
+        starFilter.addEventListener('change', renderGallery);
+
+        // *** Evento para el botón "Limpiar Todas las Imágenes" ***
+        clearAllButton.addEventListener('click', function() {
+            const confirmClear = confirm('¿Estás seguro de que quieres eliminar TODAS las imágenes cargadas y sus datos?');
+            if (!confirmClear) {
+                return;
+            }
+
+            // Revocar Object URLs para liberar memoria
+            imagesData.forEach(imageData => {
+                if (imageData.objectURL) {
+                    URL.revokeObjectURL(imageData.objectURL);
+                }
+            });
+
+            gallery.innerHTML = '';
+            imageInput.value = '';
+            imagesData = []; 
+            starFilter.value = '0';
+            currentImageIndexInModal = -1;
+            resetZoom();
+            renderGallery(); // Para actualizar el contador
+        });
+
+        // *** Funcionalidad: Exportar datos a TXT (MODIFICADO para selección de usuario) ***
+        exportDataButton.addEventListener('click', function() {
+            if (imagesData.length === 0) {
+                alert('No hay imágenes para exportar.');
+                return;
+            }
+            if (users.length === 0) {
+                alert('No hay usuarios para exportar datos.');
+                return;
+            }
+
+            // Mostrar el modal de selección de usuarios
+            populateExportUserCheckboxes();
+            exportUserSelectionModal.style.display = 'flex'; 
+        });
+
+        function populateExportUserCheckboxes() {
+            userCheckboxesContainer.innerHTML = '';
+            users.forEach(user => {
+                const label = document.createElement('label');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = user.id;
+                checkbox.id = `exportUser-${user.id}`;
+                // Marcar el usuario activo por defecto
+                if (activeUser && user.id === activeUser.id) {
+                    checkbox.checked = true;
+                }
+                
+                label.appendChild(checkbox);
+                label.append(user.name);
+                userCheckboxesContainer.appendChild(label);
+            });
+        }
+
+        exportSelectedUsersButton.addEventListener('click', function() {
+            const selectedUserIds = Array.from(userCheckboxesContainer.querySelectorAll('input[type="checkbox"]:checked'))
+                                       .map(checkbox => checkbox.value);
+
+            if (selectedUserIds.length === 0) {
+                alert('Por favor, selecciona al menos un usuario para exportar.');
+                return;
+            }
+
+            let allExportText = ""; 
+
+            selectedUserIds.forEach(userId => {
+                const userToExport = users.find(u => u.id === userId);
+                if (!userToExport) return; 
+
+                allExportText += `--- Información de Imágenes para Usuario: ${userToExport.name} (ID: ${userToExport.id}) ---\n\n`;
+                
+                imagesData.forEach((image, index) => {
+                    const userRatingData = image.ratings[userToExport.id] || { rating: 0, isMarkedForDeletion: false };
+
+                    allExportText += `Imagen ${index + 1}:\n`;
+                    allExportText += `  Nombre: ${image.name}\n`;
+                    allExportText += `  Estrellas: ${userRatingData.rating} de 5\n`;
+                    allExportText += `  Estado: ${userRatingData.isMarkedForDeletion ? 'Eliminar' : 'Conservar'}\n`;
+                    allExportText += `---\n\n`;
+                });
+                allExportText += "\n\n"; 
+            });
+
+            const blob = new Blob([allExportText], { type: 'text/plain;charset=utf-8' });
+            const today = new Date();
+            let fileNameSuffix = "";
+            if (selectedUserIds.length === 1) {
+                fileNameSuffix = "_" + users.find(u => u.id === selectedUserIds[0]).name.replace(/\s/g, '_');
+            } else {
+                fileNameSuffix = "_multiples_usuarios";
+            }
+            const fileName = `fotos_clasificadas${fileNameSuffix}_${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}.txt`;
+
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(a.href);
+
+            closeExportUserSelectionModal(); 
+        });
+
+        closeExportModalButton.onclick = closeExportUserSelectionModal;
+        cancelExportButton.onclick = closeExportUserSelectionModal;
+
+        function closeExportUserSelectionModal() {
+            exportUserSelectionModal.style.display = 'none';
+        }
+
+
+        // *** Funcionalidad: Importar datos de TXT ***
+        importDataButton.addEventListener('click', function() {
+            if (!activeUser) {
+                alert('Por favor, selecciona o crea un usuario activo antes de importar datos.');
+                return;
+            }
+            importFileInput.click();
+        });
+
+        importFileInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const importedText = e.target.result;
+                processImportedData(importedText);
+            };
+            reader.readAsText(file);
+        });
+
+        function processImportedData(text) {
+            try {
+                const lines = text.split('\n');
+                const importedPhotosData = {};
+                let currentPhotoName = null;
+                let importedForUser = 'Desconocido';
+
+                const userHeaderMatch = text.match(/--- Información de Imágenes para Usuario: (.*?) \(ID: (.*?)\) ---/);
+                if (userHeaderMatch && userHeaderMatch[1]) {
+                    importedForUser = userHeaderMatch[1].trim();
+                }
+                
+                lines.forEach(line => {
+                    line = line.trim();
+                    if (line.startsWith('Nombre:')) {
+                        currentPhotoName = line.replace('Nombre:', '').trim();
+                        importedPhotosData[currentPhotoName] = { rating: 0, isMarkedForDeletion: false };
+                    } else if (line.startsWith('Estrellas:') && currentPhotoName) {
+                        const ratingMatch = line.match(/(\d+) de 5/);
+                        if (ratingMatch && ratingMatch[1]) {
+                            importedPhotosData[currentPhotoName].rating = parseInt(ratingMatch[1], 10);
+                        }
+                    } else if (line.startsWith('Estado:') && currentPhotoName) {
+                        const status = line.replace('Estado:', '').trim();
+                        importedPhotosData[currentPhotoName].isMarkedForDeletion = (status === 'Eliminar');
+                    }
+                });
+
+                if (importedForUser !== activeUser.name && importedForUser !== 'Desconocido') {
+                    const confirmImport = confirm(`El archivo parece ser para el usuario "${importedForUser}". ¿Estás seguro de que quieres aplicar ESTOS datos al usuario activo "${activeUser.name}"?`);
+                    if (!confirmImport) {
+                        alert('Importación cancelada.');
+                        return;
+                    }
+                } else if (importedForUser === 'Desconocido' && users.length > 1) { 
+                     const confirmImport = confirm(`El archivo no especifica un usuario. ¿Estás seguro de que quieres aplicar ESTOS datos al usuario activo "${activeUser.name}"?`);
+                     if (!confirmImport) {
+                        alert('Importación cancelada.');
+                        return;
+                    }
+                }
+
+
+                let updatedCount = 0;
+                imagesData.forEach(imageData => {
+                    if (importedPhotosData[imageData.name]) {
+                        const importedData = importedPhotosData[imageData.name];
+                        if (!imageData.ratings[activeUser.id]) {
+                            imageData.ratings[activeUser.id] = {};
+                        }
+                        imageData.ratings[activeUser.id].rating = importedData.rating;
+                        imageData.ratings[activeUser.id].isMarkedForDeletion = importedData.isMarkedForDeletion;
+                        updatedCount++;
+                    }
+                });
+
+                if (updatedCount > 0) {
+                    alert(`Se actualizaron ${updatedCount} imágenes para el usuario ${activeUser.name} con los datos importados.`);
+                    renderGallery();
+                } else {
+                    alert('No se encontraron coincidencias de imágenes para actualizar con los datos importados. Asegúrate de que las fotos estén cargadas y los nombres de archivo coincidan.');
+                }
+                importFileInput.value = ''; 
+            } catch (error) {
+                alert('Error al procesar los datos importados: ' + error.message);
+                console.error('Error al procesar los datos importados:', error);
+            }
+        }
+
+        // *** NUEVA FUNCIONALIDAD: Exportar Fotos por Calificación (ZIP) ***
+        exportByStarsButton.addEventListener('click', async function() {
+            if (!activeUser) {
+                alert('Por favor, selecciona o crea un usuario activo para exportar las fotos.');
+                return;
+            }
+            if (imagesData.length === 0) {
+                alert('No hay imágenes cargadas para exportar.');
+                return;
+            }
+
+            try {
+                const zip = new JSZip();
+                const processedCount = { total: 0, skipped: 0 };
+
+                // Crear carpetas para cada calificación
+                for (let i = 0; i <= 5; i++) {
+                    zip.folder(`${i}-estrellas`);
+                }
+                zip.folder('marcadas-para-eliminar'); // Carpeta para las marcadas para eliminar
+
+                for (const imageData of imagesData) {
+                    const userRatingData = imageData.ratings[activeUser.id];
+
+                    if (imageData.originalFile) { // Asegurarse de que tenemos el archivo original
+                        let folderName = '';
+                        if (userRatingData && userRatingData.isMarkedForDeletion) {
+                            folderName = 'marcadas-para-eliminar';
+                        } else if (userRatingData) {
+                            folderName = `${userRatingData.rating}-estrellas`;
+                        } else {
+                            // Si no hay datos para el usuario actual, la ponemos en 0-estrellas o sin calificar
+                            folderName = '0-estrellas';
+                        }
+                        
+                        // Añadir la imagen al ZIP
+                        zip.folder(folderName).file(imageData.name, imageData.originalFile);
+                        processedCount.total++;
+                    } else {
+                        console.warn(`Saltando imagen ${imageData.name}: el archivo original no está disponible para exportación.`);
+                        processedCount.skipped++;
+                    }
+                }
+
+                if (processedCount.total === 0) {
+                    alert('No se pudieron encontrar archivos originales para exportar. Asegúrate de que las imágenes se cargaron correctamente.');
+                    return;
+                }
+
+                // Generar el archivo ZIP
+                const content = await zip.generateAsync({ type: "blob" });
+
+                // Crear un enlace de descarga
+                const today = new Date();
+                const fileName = `fotos_calificadas_por_${activeUser.name.replace(/\s/g, '_')}_${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}.zip`;
+                
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(content);
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(a.href);
+
+                alert(`Exportación completada. Se exportaron ${processedCount.total} imágenes organizadas por calificación. (${processedCount.skipped} imágenes no pudieron ser exportadas por falta del archivo original).`);
+
+            } catch (error) {
+                alert('Error al generar el archivo ZIP de exportación: ' + error.message);
+                console.error('Error al generar ZIP:', error);
+            }
+        });
+
+
+        // *** Manejo de teclado para navegación y calificación ***
+        function handleKeyboardInput(event) {
+            const keysToPreventDefault = ["ArrowLeft", "ArrowRight", "Digit0", "Digit1", "Digit2", "Digit3", "Digit4", "Digit5", "Escape", "d", "D", "k", "K"];
+            if (keysToPreventDefault.includes(event.key)) {
+                event.preventDefault();
+            }
+
+            if (!activeUser) { 
+                alert('Por favor, selecciona o crea un usuario activo.'); 
+                return;
+            }
+            
+            if (imagesData.length === 0 || currentImageIndexInModal === -1) {
+                return;
+            }
+
+            // Asegurarse de que el objeto de calificación para el usuario activo exista
+            if (!imagesData[currentImageIndexInModal].ratings[activeUser.id]) {
+                imagesData[currentImageIndexInModal].ratings[activeUser.id] = { rating: 0, isMarkedForDeletion: false };
+            }
+
+            switch (event.key) {
+                case "ArrowLeft": 
+                    navigateImage('prev');
+                    break;
+                case "ArrowRight":
+                    navigateImage('next');
+                    break;
+                case "Digit0":
+                case "Digit1": 
+                case "Digit2": 
+                case "Digit3": 
+                case "Digit4": 
+                case "Digit5": 
+                    const newRating = parseInt(event.key);
+                    imagesData[currentImageIndexInModal].ratings[activeUser.id].rating = newRating;
+                    imagesData[currentImageIndexInModal].ratings[activeUser.id].isMarkedForDeletion = 
+                        imagesData[currentImageIndexInModal].ratings[activeUser.id]?.isMarkedForDeletion || false; 
+
+                    updateModalStarsDisplay(newRating);
+                    navigateImage('next'); 
+                    break;
+                case "Escape": 
+                    closeModal();
+                    break;
+                case "d": 
+                case "D":
+                    imagesData[currentImageIndexInModal].ratings[activeUser.id].isMarkedForDeletion = true;
+                    imagesData[currentImageIndexInModal].ratings[activeUser.id].rating = 
+                        imagesData[currentImageIndexInModal].ratings[activeUser.id]?.rating || 0; 
+                    navigateImage('next'); 
+                    break;
+                case "k": 
+                case "K":
+                    imagesData[currentImageIndexInModal].ratings[activeUser.id].isMarkedForDeletion = false;
+                    imagesData[currentImageIndexInModal].ratings[activeUser.id].rating = 
+                        imagesData[currentImageIndexInModal].ratings[activeUser.id]?.rating || 0; 
+                    navigateImage('next');
+                    break;
+            }
+        }
+
+        // *** Inicialización de la aplicación ***
+        createUserButton.addEventListener('click', createUser);
+        deleteUserButton.addEventListener('click', deleteUser);
+        userSelect.addEventListener('change', switchUser);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeUsers(); 
+            renderGallery(); 
+        });
+    </script>
+</body>
+</html>
