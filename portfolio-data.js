@@ -332,6 +332,42 @@ const portfolioData = {
                 "alt": "photo"
             }
         ],
+        "Bella": [
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753551913/DSC09093_amlw0h.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753551652/DSC08476-2_rr10iy.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753552208/DSC09579_b0szvg.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753551783/DSC09623_hehuba.jpg",
+                "alt": "photo"
+            }
+        ],
+        "Fanny 1": [
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753548872/DSC00205-Enhanced-NR_kfgj1e.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753548867/DSC00107_ffsndk.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753548868/DSC00188_j3baof.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753548866/DSC00099_id3obz.jpg",
+                "alt": "photo"
+            }
+        ],
         "Anne 2": [
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753441068/DSC03754_uy1mhr.jpg",
@@ -363,6 +399,40 @@ const portfolioData = {
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753442278/DSC03820_i1fsbw.jpg",
+                "alt": "photo"
+            }
+        ],
+        "Pamela 1": [
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753552259/DSC02232_edr9uy.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753552253/DSC02192_m1yikk.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753552257/DSC02218_rntipo.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753552255/DSC02199_jqud2f.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753552250/DSC02128_ufhrnp.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753552251/DSC02169_tjnsd9.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753552248/DSC02127_fvq1hj.jpg",
+                "alt": "photo"
+            },
+            {
+                "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753553007/DSC02182_xquznj.jpg",
                 "alt": "photo"
             }
         ]
