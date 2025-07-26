@@ -50,10 +50,20 @@
 
     <h1>Menú Principal</h1>
 
+    <button id="clear-cache-btn">Limpiar caché de la página</button>
+    
        <ul>
-        <li><a href="edit.html">Ir a la página de edición</a></li>
-        <li><a href="clasificador.html">Ir a la página del clasificador</a></li>
+        <li><a href="/Others Html/edit.html">Ir a la página de edición</a></li>
+        <li><a href="/Others Html/clasificador.html">Ir a la página del clasificador</a></li>
     </ul>
+
+    <script>
+        document.getElementById('clear-cache-btn').addEventListener('click', function() {
+            localStorage.clear();
+            sessionStorage.clear();
+            alert('¡Caché local de la página limpiada!');
+        });
+    </script>
 
 </body>
 </html>
