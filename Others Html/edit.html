@@ -432,7 +432,7 @@
                 const imageElement = document.createElement('div');
                 imageElement.className = 'image-entry flex items-center gap-2 bg-gray-100 p-1 rounded';
                 imageElement.setAttribute('draggable', 'true');
-                imageElement.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="drag-handle bi bi-grip-vertical flex-shrink-0" viewBox="0 0 16 16"><path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg><button class="star-btn" title="Marcar como imagen principal">☆</button><div class="image-preview-container"><img src="${url}" class="image-preview-thumb w-8 h-8 object-cover rounded-sm mr-2 flex-shrink-0" onerror="this.src='https://placehold.co/32x32/ccc/999?text=URL'"></div><input type="text" value="${url}" class="image-url-display text-xs text-gray-500 bg-transparent flex-grow border-b border-transparent focus:border-blue-500 focus:outline-none min-w-0"><button class="remove-image-btn text-red-400 hover:text-red-600 font-semibold">&times;</button>`;
+                imageElement.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="drag-handle bi bi-grip-vertical flex-shrink-0" viewBox="0 0 16 16"><path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg><button class="star-btn" title="Destacar imagen (añade 'starred: true')">☆</button><div class="image-preview-container"><img src="${url}" class="image-preview-thumb w-8 h-8 object-cover rounded-sm mr-2 flex-shrink-0" onerror="this.src='https://placehold.co/32x32/ccc/999?text=URL'"></div><input type="text" value="${url}" class="image-url-display text-xs text-gray-500 bg-transparent flex-grow border-b border-transparent focus:border-blue-500 focus:outline-none min-w-0"><button class="remove-image-btn text-red-400 hover:text-red-600 font-semibold">&times;</button>`;
                 container.appendChild(imageElement);
                 updateImageLimitMessage(container.closest('.subcategory-block'));
             }
@@ -541,10 +541,8 @@
                     imageEntry.remove();
                     updateImageLimitMessage(parentSub);
                 } else if (target.classList.contains('star-btn')) {
-                    const parentContainer = target.closest('.images-container');
-                    parentContainer.querySelectorAll('.star-btn').forEach(star => { star.textContent = '☆'; star.classList.remove('selected'); });
-                    target.textContent = '⭐';
-                    target.classList.add('selected');
+                    target.classList.toggle('selected');
+                    target.textContent = target.classList.contains('selected') ? '⭐' : '☆';
                 } 
             });
 
@@ -661,23 +659,21 @@
             });
             
             function getImagesFromContainer(container) {
-                const allImages = [];
-                let representativeImage = null;
+                const images = [];
                 container.querySelectorAll('.image-entry').forEach(entry => {
                     const url = entry.querySelector('.image-url-display').value;
                     if (url) {
-                        const imageObject = { src: url, alt: `photo` };
-                        allImages.push(imageObject);
+                        const imageObject = {
+                            src: url,
+                            alt: 'photo'
+                        };
                         if (entry.querySelector('.star-btn.selected')) {
-                            representativeImage = imageObject;
+                            imageObject.starred = true;
                         }
+                        images.push(imageObject);
                     }
                 });
-                if (representativeImage) {
-                    // Mueve la imagen representativa al principio del array
-                    return [representativeImage, ...allImages.filter(img => img.src !== representativeImage.src)];
-                }
-                return allImages;
+                return images;
             }
 
             copyBtn.addEventListener('click', () => {
@@ -752,13 +748,16 @@
                             const subcategoryData = data[categoryName][subcategoryName];
                             if (Array.isArray(subcategoryData)) {
                                 const imagesContainer = subcategoryBlock.querySelector('.images-container');
-                                let firstImageMarked = false;
                                 subcategoryData.forEach((image) => {
                                     if (image && image.src) {
                                         createImageElement(imagesContainer, image.src);
-                                        if (!firstImageMarked && imagesContainer.lastElementChild && image.isRepresentative) {
-                                            imagesContainer.lastElementChild.querySelector('.star-btn').click();
-                                            firstImageMarked = true;
+                                        if (image.starred === true) {
+                                            const newImageElement = imagesContainer.lastElementChild;
+                                            if (newImageElement) {
+                                                const starBtn = newImageElement.querySelector('.star-btn');
+                                                starBtn.classList.add('selected');
+                                                starBtn.textContent = '⭐';
+                                            }
                                         }
                                     }
                                 });

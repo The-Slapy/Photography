@@ -19,7 +19,8 @@ const portfolioData = {
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload/v1753160119/Boda_1-3_h2rpme.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload/v1753160119/Boda_1-6_taeo36.jpg",
@@ -43,7 +44,8 @@ const portfolioData = {
         "Vestidos Luis": [
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753347684/6-DSC00626_pfa1dc.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753347684/5-DSC00614_zqrcff.jpg",
@@ -63,7 +65,8 @@ const portfolioData = {
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753347682/4-DSC00567_g56qdz.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753347682/1-DSC00529_xnfinb.jpg",
@@ -93,7 +96,8 @@ const portfolioData = {
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753350075/7-DSC00330_jfcczo.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753350077/6-DSC00312_cgm8j6.jpg",
@@ -111,7 +115,8 @@ const portfolioData = {
         "Victor Pila": [
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753351306/DSC01005_q7kxb7.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753351307/DSC01699_bred78.jpg",
@@ -185,7 +190,8 @@ const portfolioData = {
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753175291/7-DSC03461_abbjyr.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753175289/5-DSC03458_hgpvef.jpg",
@@ -365,7 +371,8 @@ const portfolioData = {
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753548866/DSC00099_id3obz.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             }
         ],
         "Anne 2": [
@@ -375,7 +382,8 @@ const portfolioData = {
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753442174/DSC03830_bsuc3e.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753441079/DSC03752-Enhanced-NR_tiiwga.jpg",
@@ -441,7 +449,8 @@ const portfolioData = {
         "Avalon Fest": [
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753172430/2-DSC04138_yrwf84.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753172434/6-DSC04668_ohfrbr.jpg",
@@ -479,7 +488,8 @@ const portfolioData = {
         "ConCon": [
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753464622/DSC04722_wgfih5.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753464621/DSC04680_hvpagw.jpg",
@@ -533,7 +543,8 @@ const portfolioData = {
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753444635/4-DSC05398_dxpbol.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753444630/1-DSC05379_umpzgj.jpg",
