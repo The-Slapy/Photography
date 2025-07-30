@@ -19,8 +19,7 @@ const portfolioData = {
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload/v1753160119/Boda_1-3_h2rpme.jpg",
-                "alt": "photo",
-                "starred": true
+                "alt": "photo"
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload/v1753160119/Boda_1-6_taeo36.jpg",
@@ -53,7 +52,8 @@ const portfolioData = {
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753347683/7-DSC00634_jcevma.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753347683/8-DSC00637_jejghh.jpg",
@@ -74,13 +74,15 @@ const portfolioData = {
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753347683/3-DSC00566_yaxu5x.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             }
         ],
         "Majo Studio 1": [
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753350075/1-DSC00217_p3djro.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753350076/3-DSC00251_fubdk9.jpg",
@@ -105,7 +107,8 @@ const portfolioData = {
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753350075/8-DSC00336_dnusxw.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753350076/5-DSC00285_tvakhj.jpg",
@@ -128,7 +131,8 @@ const portfolioData = {
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753351306/DSC00928_sn0qrh.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753351306/DSC01630_de23he.jpg",
@@ -215,13 +219,15 @@ const portfolioData = {
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753175285/1-DSC03452_qdasf0.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             }
         ],
         "Anne 1": [
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753176383/8-DSC03681_qfx0qj.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753176376/6-DSC03679_r0y8dw.jpg",
@@ -233,7 +239,8 @@ const portfolioData = {
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753176380/7-DSC03680_yg628o.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753176334/2-DSC03665_mgh9pr.jpg",
@@ -263,7 +270,8 @@ const portfolioData = {
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753176455/4-DSC03343_u7ev19.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753176458/3-DSC03338_wfekvb.jpg",
@@ -283,7 +291,8 @@ const portfolioData = {
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753176448/8-DSC03377_d2prsz.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             }
         ],
         "Annie": [
@@ -327,11 +336,13 @@ const portfolioData = {
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753442581/5-DSC03936_vnlz20.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753442579/1-DSC04081_kxtev5.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753442579/4-DSC03944_yczkns.jpg",
@@ -359,7 +370,8 @@ const portfolioData = {
         "Fanny 1": [
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753548872/DSC00205-Enhanced-NR_kfgj1e.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753548867/DSC00107_ffsndk.jpg",
@@ -399,7 +411,8 @@ const portfolioData = {
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753440975/3-DSC03774_secc1g.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753440976/2-DSC03811_msc0ew.jpg",
@@ -413,7 +426,8 @@ const portfolioData = {
         "Pamela 1": [
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753552259/DSC02232_edr9uy.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753552253/DSC02192_m1yikk.jpg",
@@ -437,7 +451,8 @@ const portfolioData = {
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753552248/DSC02127_fvq1hj.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753553007/DSC02182_xquznj.jpg",
@@ -470,7 +485,8 @@ const portfolioData = {
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753172435/7-DSC04722_fyusfx.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753172429/1-DSC04135_kzlyct.jpg",
@@ -478,7 +494,8 @@ const portfolioData = {
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753173420/DSC05385_oumiez.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753172432/4-DSC04151_lxd69k.jpg",
@@ -505,7 +522,8 @@ const portfolioData = {
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753464625/DSC05048_fnxzy8.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753464623/DSC04836_pematn.jpg",
@@ -523,7 +541,8 @@ const portfolioData = {
         "Avalon Fest 2": [
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753444634/2-DSC05385_ipvpnn.jpg",
-                "alt": "photo"
+                "alt": "photo",
+                "starred": true
             },
             {
                 "src": "https://res.cloudinary.com/dzfelzmah/image/upload//l_image:upload:Logo_qion6u/c_scale,fl_relative,w_0.30/o_100/fl_layer_apply,g_south_east,x_0.03,y_0.04/v1753444631/3-DSC05390_ivnsa7.jpg",
