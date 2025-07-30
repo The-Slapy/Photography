@@ -56,18 +56,16 @@
 
         .filter-btn.active { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
         
-        /* Grid View Styles */
-        .gallery-item {
+        .gallery-item-grid {
             transition: opacity 0.5s ease-out, transform 0.5s ease-out;
             transform: translateY(0);
         }
-        .gallery-item.hidden {
+        .gallery-item-grid.hidden {
             opacity: 0;
             transform: translateY(40px);
             pointer-events: none;
         }
         
-        /* Thumbnail View Styles (from v1) */
         .thumbnail {
             cursor: pointer;
             transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
@@ -76,15 +74,13 @@
         .thumbnail:hover { transform: scale(1.05); }
         .thumbnail.active { border-color: #3b82f6; /* blue-500 */ }
         
-        /* MODIFICACIÓN: Eliminar el borde de la imagen principal en la vista de miniaturas */
         .main-image-container { 
             aspect-ratio: 1 / 1; 
-            border: none; /* Se agregó anteriormente para quitar el borde CSS */
+            border: none;
         }
         @media (min-width: 768px) { .main-image-container { aspect-ratio: 4 / 5; } }
         .thumbnail-container { aspect-ratio: 1 / 1; }
 
-        /* Styles for a smoother, more dynamic view transition */
         main {
             position: relative;
         }
@@ -103,14 +99,34 @@
             width: 100%;
         }
 
-        /* Agregado: Estilos para evitar la descarga de imágenes */
+        /* --- Estilos para el Collage de Inicio --- */
+        #home-collage-container:has(.gallery-item:hover) .gallery-item:not(:hover) {
+            opacity: 0.6;
+            }
+        #home-collage-view .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: rotate(var(--rotation-angle, 0deg));
+            transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease, margin-top 0.3s ease;
+            will-change: transform, opacity, margin-top;
+        }
+        /* --- Fin de Estilos del Collage --- */
+
+        /* --- Estilos para el efecto hover en miniaturas --- */
+        #thumbnail-grid-container:has(.thumbnail-container:hover) .thumbnail-container:not(:hover) {
+            opacity: 0.5;
+            transform: scale(0.95);
+            }
+
+        .thumbnail-container {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
         img {
-            -webkit-user-select: none; /* Safari */
-            -moz-user-select: none;    /* Firefox */
-            -ms-user-select: none;     /* IE 10+ */
-            user-select: none;         /* Standard */
-            -webkit-touch-callout: none; /* iOS Safari */
-            -webkit-user-drag: none;   /* Safari */
+            -webkit-user-select: none; user-select: none;
+            -webkit-touch-callout: none; -webkit-user-drag: none;
         }
     </style>
     
@@ -129,32 +145,18 @@
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-20">
                     <div>
-                        <a href="#" id="logo-link">
+                        <a href="index.html" id="logo-link">
                             <img id="logo-img" class="h-12 w-auto" src="" alt="Logo del Fotógrafo">
                         </a>
                     </div>
                     <div class="flex items-center space-x-2">
                         <nav id="main-nav" class="hidden md:flex items-center space-x-2 lg:space-x-4"></nav>
                         
-                        <!-- View Switcher Button -->
                         <button id="view-toggle-btn" type="button" class="control-btn" title="Cambiar vista">
-                            <svg id="view-grid-icon" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <circle cx="4" cy="4" r="1.5" />
-                                <circle cx="10" cy="4" r="1.5" />
-                                <circle cx="16" cy="4" r="1.5" />
-                                <circle cx="4" cy="10" r="1.5" />
-                                <circle cx="10" cy="10" r="1.5" />
-                                <circle cx="16" cy="10" r="1.5" />
-                                <circle cx="4" cy="16" r="1.5" />
-                                <circle cx="10" cy="16" r="1.5" />
-                                <circle cx="16" cy="16" r="1.5" />
-                            </svg>
-                            <svg id="view-thumbnail-icon" class="h-5 w-5 hidden" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M2 3a1 1 0 011-1h14a1 1 0 011 1v14a1 1 0 01-1 1H3a1 1 0 01-1-1V3zm2 1v12h7V4H4zm9 0v3h3V4h-3zm0 5v3h3V9h-3zm0 5v3h3v-3h-3z" clip-rule="evenodd" />
-                            </svg>
+                             <svg id="view-grid-icon" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" /></svg>
+                            <svg id="view-thumbnail-icon" class="h-5 w-5 hidden" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2 3a1 1 0 011-1h14a1 1 0 011 1v14a1 1 0 01-1 1H3a1 1 0 01-1-1V3zm2 1v12h7V4H4zm9 0v3h3V4h-3zm0 5v3h3V9h-3zm0 5v3h3v-3h-3z" clip-rule="evenodd" /></svg>
                         </button>
                         
-                        <!-- Theme Toggle Button -->
                         <button id="theme-toggle" type="button" class="control-btn" title="Cambiar tema">
                             <svg id="theme-toggle-dark-icon" class="hidden h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
                             <svg id="theme-toggle-light-icon" class="hidden h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
@@ -162,9 +164,7 @@
 
                         <div class="md:hidden ml-2">
                             <button id="mobile-menu-button" class="p-2 rounded-md text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-surface focus:outline-none" title="Abrir menú móvil">
-                                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-                                </svg>
+                                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
                             </button>
                         </div>
                     </div>
@@ -176,14 +176,32 @@
         </header>
 
         <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+            <!-- Contenedor para el Collage de Inicio -->
+            <div id="home-collage-view" class="view-container">
+                 <section id="hero" class="text-center my-12">
+                    <h2 class="text-5xl lg:text-6xl font-extrabold text-slate-900 mb-4 dark:text-white">Capturando Momentos Únicos</h2>
+                    <p class="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">Explora una selección de mi trabajo y descubre cómo mi lente puede contar tu historia.</p>
+                </section>
+                <div id="home-collage-container" class="flex gap-4">
+                    <!-- Columna 1 -->
+                    <div class="flex-1 flex flex-col gap-4"></div>
+                    <!-- Columna 2 -->
+                    <div class="flex-1 flex flex-col gap-4"></div>
+                    <!-- Columna 3 (visible en tablets y más grandes) -->
+                    <div class="flex-1 flex flex-col gap-4 hidden md:flex"></div>
+                    <!-- Columna 4 (visible en escritorio y más grandes) -->
+                    <div class="flex-1 flex flex-col gap-4 hidden lg:flex"></div>
+                </div>            </div>
+
+            <!-- Contenedor para la Galería en Grid/Clasica -->
             <div id="gallery-grid-view" class="view-container">
                 <div id="gallery" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 items-center">
                     <p id="loading-message" class="col-span-full text-center text-gray-500 dark:text-dark-text-secondary">Cargando fotografías...</p>
                 </div>
             </div>
-            <div id="gallery-thumbnail-view" class="view-container is-inactive">
-                <!-- Thumbnail view content will be injected here -->
-            </div>
+
+             <!-- Contenedor para la Vista de Miniaturas -->
+            <div id="gallery-thumbnail-view" class="view-container is-inactive"></div>
         </main>
 
         <div id="lightbox" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden p-4 z-[100]">
@@ -201,7 +219,6 @@
         </footer>
     </div>
     
-    <!-- Se vuelve a incluir la línea para cargar el archivo externo portfolio-data.js -->
     <script src="portfolio-data.js"></script> 
 
     <script>
@@ -215,8 +232,11 @@
             const logoImg = document.getElementById('logo-img');
             const mainNav = document.getElementById('main-nav');
             const mobileNav = document.getElementById('mobile-nav');
+
+            const homeCollageView = document.getElementById('home-collage-view');
             const galleryGridView = document.getElementById('gallery-grid-view');
             const galleryThumbnailView = document.getElementById('gallery-thumbnail-view');
+            
             const gallery = document.getElementById('gallery');
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
@@ -228,14 +248,14 @@
             const loadingMessage = document.getElementById('loading-message');
             
             // --- State Variables ---
-            let activeCategory = '';
+            let activeCategory = 'Inicio';
             let activeSubcategory = 'All';
             let currentView = localStorage.getItem('gallery-view') || 'grid'; // 'grid' or 'thumbnail'
             let currentImages = [];
             let currentIndex = 0;
             
             // --- Event Listeners ---
-            logoLink.addEventListener('click', (e) => { e.preventDefault(); location.reload(); });
+            logoLink.addEventListener('click', (e) => { e.preventDefault(); location.href = 'index.html'; });
             
             themeToggleBtn.addEventListener('click', () => {
                 document.documentElement.classList.toggle('dark');
@@ -244,11 +264,14 @@
             });
 
             viewToggleBtn.addEventListener('click', () => {
+                // This listener now correctly triggers the view change logic
+                window.scrollTo({ top: 0, behavior: 'smooth' });
                 currentView = currentView === 'grid' ? 'thumbnail' : 'grid';
                 localStorage.setItem('gallery-view', currentView);
                 updateViewToggleButton();
                 
-                if (activeSubcategory !== 'All') {
+                // This condition ensures the view only changes when a subcategory is active
+                if (activeCategory !== 'Inicio' && activeSubcategory !== 'All') {
                     if (currentView === 'thumbnail') {
                         displayThumbnailView(activeSubcategory);
                     } else {
@@ -260,7 +283,6 @@
             mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
             gallery.addEventListener('click', handleGridClick);
 
-            // --- Lightbox Listeners ---
             const closeLightbox = () => lightbox.classList.add('hidden');
             closeLightboxBtn.addEventListener('click', closeLightbox);
             lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
@@ -276,18 +298,13 @@
 
             // --- Main Functions ---
             function handleGridClick(e) {
-                const item = e.target.closest('.gallery-item');
+                const item = e.target.closest('.gallery-item-grid');
                 if (!item || item.classList.contains('hidden')) return;
                 
-                const subcategoryToDisplay = item.dataset.subcategory;
-
-                if (activeSubcategory === 'All') { // We are in representative view
-                    if (currentView === 'grid') {
-                        selectSubcategory(subcategoryToDisplay);
-                    } else {
-                        displayThumbnailView(subcategoryToDisplay);
-                    }
-                } else { // We are in detailed grid view
+                if (activeSubcategory === 'All') { // Vista de subcategorías
+                    const subcategoryToDisplay = item.dataset.subcategory;
+                    selectSubcategory(subcategoryToDisplay);
+                } else { // Vista detallada de una subcategoría
                     const imgSrc = item.querySelector('img').src;
                     currentIndex = currentImages.indexOf(imgSrc);
                     if (currentIndex > -1) {
@@ -302,48 +319,39 @@
                 const images = portfolioData[activeCategory]?.[subcategory] || [];
                 if (images.length === 0) return;
 
+                galleryGridView.classList.add('is-inactive');
+                galleryThumbnailView.innerHTML = `...`; // Placeholder
+                homeCollageView.classList.add('is-inactive');
+                galleryThumbnailView.classList.remove('is-inactive');
+
                 let thumbnailHTML = '';
                 images.forEach((img, index) => {
-                    let thumbSrc = img.src;
-                    if (img.src.includes('res.cloudinary.com')) {
-                        thumbSrc = img.src.replace('/upload/', '/upload/w_400,q_auto/');
-                    }
-                    thumbnailHTML += `
-                        <div class="thumbnail-container">
-                            <!-- Agregado: draggable="false" para evitar arrastrar la miniatura -->
-                            <img src="${thumbSrc}" data-full-src="${img.src}" alt="${img.alt || `Miniatura ${index + 1}`}" class="thumbnail w-full h-full object-cover rounded-md ${index === 0 ? 'active' : ''}" draggable="false">
-                        </div>`;
+                    let thumbSrc = img.src.includes('res.cloudinary.com') ? img.src.replace('/upload/', '/upload/w_400,q_auto/') : img.src;
+                    thumbnailHTML += `<div class="thumbnail-container"><img src="${thumbSrc}" data-full-src="${img.src}" alt="${img.alt || `Miniatura ${index + 1}`}" class="thumbnail w-full h-full object-cover rounded-md ${index === 0 ? 'active' : ''}" draggable="false"></div>`;
                 });
 
-                const viewHTML = `
+                // **FIX**: Added 'md:items-center' to vertically center the thumbnails container
+                galleryThumbnailView.innerHTML = `
                     <div class="subcategory-gallery max-w-5xl mx-auto">
-                        <div class="flex flex-col md:flex-row gap-4 items-center">
+                        <div class="flex flex-col md:flex-row gap-4 md:items-center">
                             <div class="w-full md:w-2/3 main-image-container rounded-lg flex items-center justify-center">
-                                <!-- MODIFICACIÓN: Se eliminó la clase 'shadow-xl' para quitar el contorno/sombra -->
-                                <!-- Agregado: draggable="false" para evitar arrastrar la imagen principal -->
                                 <img id="main-thumbnail-image" src="${images[0].src}" alt="Fotografía principal" class="w-full h-full object-contain transition-opacity duration-300 rounded-lg" draggable="false">
                             </div>
-                            <div class="w-full md:w-1/3 grid grid-cols-4 md:grid-cols-2 gap-2">
+                            <div id="thumbnail-grid-container" class="w-full md:w-1/3 grid grid-cols-4 md:grid-cols-2 gap-2 justify-items-center">
                                 ${thumbnailHTML}
                             </div>
                         </div>
                     </div>`;
                 
-                galleryGridView.classList.add('is-inactive');
-                galleryThumbnailView.innerHTML = viewHTML;
-                galleryThumbnailView.classList.remove('is-inactive');
-
                 galleryThumbnailView.querySelectorAll('.thumbnail').forEach(thumb => {
                     thumb.addEventListener('click', (e) => {
                         const clickedThumb = e.target;
                         const mainImage = document.getElementById('main-thumbnail-image');
-                        
                         mainImage.style.opacity = 0;
                         setTimeout(() => {
                             mainImage.src = clickedThumb.dataset.fullSrc;
                             mainImage.style.opacity = 1;
                         }, 200);
-                        
                         galleryThumbnailView.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
                         clickedThumb.classList.add('active');
                     });
@@ -354,7 +362,7 @@
                 gallery.innerHTML = ''; 
                 const createImageItem = (img, category, subcategory, isRepresentative) => {
                     const item = document.createElement('div');
-                    item.className = 'gallery-item hidden cursor-pointer group';
+                    item.className = 'gallery-item-grid hidden cursor-pointer group';
                     item.style.display = 'none';
                     item.dataset.category = category;
                     item.dataset.subcategory = subcategory;
@@ -363,9 +371,9 @@
                     const imageEl = document.createElement('img');
                     imageEl.src = img.src;
                     imageEl.alt = img.alt || 'Fotografía de portafolio';
-                    // Agregado: draggable="false" a las imágenes de la cuadrícula
                     imageEl.className = 'w-full h-auto object-cover rounded-lg shadow-md dark:shadow-black/20 group-hover:scale-105 transition-transform duration-300';
-                    imageEl.draggable = false; // Añadido para prevenir el arrastre
+                    imageEl.draggable = false; 
+                    imageEl.loading = 'lazy';
                     imageEl.onerror = () => { imageEl.src = 'https://placehold.co/600x600/ccc/999?text=Error' };
                     
                     imageEl.onload = () => {
@@ -373,7 +381,7 @@
                             item.classList.add('md:col-span-2');
                         }
                     };
-                    
+
                     item.appendChild(imageEl);
                     gallery.appendChild(item);
                 };
@@ -391,17 +399,15 @@
 
             function filterGrid(category, subcategory) {
                 activeSubcategory = subcategory;
-                const allItems = [...gallery.querySelectorAll('.gallery-item')];
+                const allItems = [...gallery.querySelectorAll('.gallery-item-grid')];
                 currentImages = []; 
                 
+                // Transiciones de vistas
+                homeCollageView.classList.add('is-inactive');
                 galleryThumbnailView.classList.add('is-inactive');
                 galleryGridView.classList.remove('is-inactive');
 
-                allItems.forEach(item => {
-                    if (!item.classList.contains('hidden')) {
-                        item.classList.add('hidden');
-                    }
-                });
+                allItems.forEach(item => item.classList.add('hidden'));
                 
                 setTimeout(() => {
                     const itemsToShow = [];
@@ -419,11 +425,8 @@
                             }
                         }
                         
-                        if (shouldShow) {
-                            itemsToShow.push(item);
-                        } else {
-                            item.style.display = 'none';
-                        }
+                        item.style.display = shouldShow ? 'block' : 'none';
+                        if(shouldShow) itemsToShow.push(item);
                     });
 
                     if (subcategory !== 'All') {
@@ -431,24 +434,127 @@
                     }
                     
                     itemsToShow.forEach((item, index) => {
-                        item.style.display = 'block';
-                        setTimeout(() => {
-                            item.classList.remove('hidden');
-                        }, 50 + (index * 50));
+                        setTimeout(() => item.classList.remove('hidden'), 50 + (index * 50));
                     });
-                }, 400);
+                }, 350);
             }
             
             function selectCategory(category) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
                 activeCategory = category;
+                activeSubcategory = 'All'; // Reset subcategory when changing main category
                 document.querySelectorAll('#main-nav .filter-btn, #mobile-nav .filter-btn').forEach(btn => {
-                    setButtonState(btn, btn.textContent === category);
+                    setButtonState(btn, btn.dataset.category === category);
                 });
-                filterGrid(category, 'All');
+                
+                if (category === 'Inicio') {
+                    homeCollageView.classList.remove('is-inactive');
+                    galleryGridView.classList.add('is-inactive');
+                    galleryThumbnailView.classList.add('is-inactive');
+                    viewToggleBtn.style.display = 'none';
+                } else {
+                    homeCollageView.classList.add('is-inactive');
+                    viewToggleBtn.style.display = 'flex';
+                    // **FIX**: Disable view toggle button when showing subcategory list
+                    viewToggleBtn.disabled = true;
+                    viewToggleBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    filterGrid(category, 'All'); 
+                }
             }
 
             function selectSubcategory(subcategory) {
-                filterGrid(activeCategory, subcategory);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                 // **FIX**: Enable view toggle button when inside a specific subcategory
+                viewToggleBtn.disabled = false;
+                viewToggleBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+                if (currentView === 'grid') {
+                    filterGrid(activeCategory, subcategory);
+                } else {
+                    displayThumbnailView(subcategory);
+                }
+            }
+            
+            function renderHomeCollage() {
+                
+                const collageContainer = document.getElementById('home-collage-container');
+                if (!collageContainer) return;
+
+                const allItems = [];
+                for (const category in portfolioData) {
+                    if (!portfolioData.hasOwnProperty(category)) continue;
+                    for (const subCategory in portfolioData[category]) {
+                        if (!portfolioData[category].hasOwnProperty(subCategory)) continue;
+                        
+                        const images = portfolioData[category][subCategory];
+                        if (Array.isArray(images)) {
+                            const starredImages = images.filter(img => img.starred === true);
+                            starredImages.forEach(starredImage => {
+                                allItems.push({ ...starredImage, category: category, subCategory: subCategory });
+                            });
+                        }
+                    }
+                }
+
+                for (let i = allItems.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [allItems[i], allItems[j]] = [allItems[j], allItems[i]];
+                }
+                    // Calcula cuántas fotos mostrar (solo múltiplos de 4)
+                    const totalPhotos = allItems.length;
+                    const photosToShowCount = Math.floor(totalPhotos / 4) * 4;
+                    const photosToShow = allItems.slice(0, photosToShowCount);
+
+                    // Limpia el contenido de cada columna individualmente
+                    Array.from(collageContainer.children).forEach(column => {
+                    column.innerHTML = '';
+                }); 
+
+               const columns = collageContainer.children;
+                photosToShow.forEach((imageInfo, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'gallery-item cursor-pointer';
+                    const randomRotation = (Math.random() * 8) - 4;
+                    item.style.setProperty('--rotation-angle', `${randomRotation}deg`);
+                    // Aquí puedes cambiar la posición vertical de cada foto.
+                    // Los valores positivos (ej. '20px') mueven la foto hacia abajo.
+                    // Los valores negativos (ej. '-15px') mueven la foto hacia arriba.
+                        let verticalOffset = '50px'; // Posición por defecto
+                        if (index === 0) {         // Para la primera foto
+                            verticalOffset = '20px';
+                        } else if (index === 1) {  // Para la segunda foto
+                            verticalOffset = '-30px';
+                        } else if (index === 2) {  // Para la tercera foto
+                            verticalOffset = '20px';
+                        } else if (index === 3) {  // Para la cuarta foto
+                            verticalOffset = '-10px';
+                        }
+                        item.style.marginTop = verticalOffset;
+                        item.addEventListener('click', () => {
+                           selectCategory(imageInfo.category);
+                           setTimeout(() => {
+                            selectSubcategory(imageInfo.subCategory);
+                        }, 50);
+                    });
+
+                    const img = document.createElement('img');
+                    img.src = imageInfo.src;
+                    img.alt = imageInfo.alt;
+                    img.className = 'w-full h-auto object-cover block';
+                    img.loading = 'lazy';
+                    img.onerror = () => { img.src = `https://placehold.co/600x400/EEE/31343C?text=Error`; };
+                    
+                    // The overlay creation is now removed
+                    // const overlay = document.createElement('div');
+                    // overlay.className = 'overlay';
+                    // overlay.innerHTML = `<p>${imageInfo.subCategory}</p>`;
+
+                    item.appendChild(img);
+                    // item.appendChild(overlay); // Also removed from being appended
+                    // Reparte las fotos entre las columnas
+                    const columnIndex = index % columns.length;
+                    columns[columnIndex].appendChild(item);
+                    });
             }
 
             // --- UI Update Functions ---
@@ -488,33 +594,34 @@
                 updateThemeAndLogo();
                 updateViewToggleButton();
                 renderAllGridItems();
+                renderHomeCollage();
                 
-                const categories = Object.keys(portfolioData);
+                const categories = ['Inicio', ...Object.keys(portfolioData)];
                 mainNav.innerHTML = '';
                 mobileNav.innerHTML = '';
                 
                 categories.forEach(category => {
                     const btn = document.createElement('button');
                     btn.textContent = category;
+                    btn.dataset.category = category;
                     btn.className = 'filter-btn px-4 py-2 text-sm font-medium rounded-full transition-colors border';
-                    setButtonState(btn, false);
                     btn.onclick = () => selectCategory(category);
                     mainNav.appendChild(btn);
                     
-                    const mobileBtn = document.createElement('button');
+                    const mobileBtn = document.createElement('a');
                     mobileBtn.textContent = category;
+                    mobileBtn.dataset.category = category;
                     mobileBtn.className = 'filter-btn block w-full text-left px-3 py-2 rounded-md text-base font-medium';
-                    setButtonState(mobileBtn, false);
-                    mobileBtn.onclick = () => {
+                    mobileBtn.href = "#";
+                    mobileBtn.onclick = (e) => {
+                        e.preventDefault();
                         selectCategory(category);
                         mobileMenu.classList.add('hidden');
                     };
                     mobileNav.appendChild(mobileBtn);
                 });
                 
-                if (categories.length > 0) {
-                    selectCategory(categories[0]);
-                }
+                selectCategory('Inicio');
                 
                 document.getElementById('year').textContent = new Date().getFullYear();
             }
